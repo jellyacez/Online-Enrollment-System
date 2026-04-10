@@ -1,4 +1,4 @@
-*,html,bodY{
+*,html,body{
     margin:0;
     padding:0;
     box-sizing: border-box;
@@ -16,17 +16,22 @@
     width: 100%;
 }
 .paybtn {
+    margin:0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  font-size:1.6em;
+  font-size:1.2em;
+  font-weight: 500;
   width: 250px;
   padding: 0.5em 1em;
   cursor:pointer;
+  border:1px solid none;
+  border-radius: 15px;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 .paybtn img{
-    width:3rem;
+    width:1.5rem;
     margin-right:0.5em
 }
 
@@ -35,16 +40,19 @@
     display:flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
-.fees-tab{
-background-color: aliceblue;
+#gcash{
+background-color:#1972F9 ;
 }
-main{
-    display:grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 3rem;
+#maya{
+background-color: black;
+color: rgb(0, 214, 0);
 }
-.student-info-con{
-    display:grid;
-    grid-template-columns: auto auto ;
+#tyme{
+background-color: aqua;
+    color:black;
+}
+#paypal{
+background-color: #2d67be;
 }
