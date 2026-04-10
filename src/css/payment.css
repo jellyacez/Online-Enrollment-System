@@ -1,6 +1,7 @@
-main div{
-        margin:auto;
-        text-align: center;
+*,html,bodY{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
 }
 .paybtns {
     display: flex;
@@ -8,6 +9,7 @@ main div{
     gap: 22px;
     max-width: 600px;
     align-items: center;
+    padding-right:1rem;
     
 }
 .paybtns button {
@@ -28,9 +30,17 @@ main div{
     margin-right:0.5em
 }
 
-.container{
+.payment-tab{
     margin:0 auto;
     display:flex;
     flex-direction: column;
     justify-content: center;
+}
+.fees-tab{
+background-color: aliceblue;
+}
+main{
+    display:grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
 }

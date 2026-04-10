@@ -4,7 +4,12 @@ import '../css/payment.css';
 export default function Payment(){
     return(
         <main>
-            <div class="container">
+            <div class="fees-tab">
+            <ul>
+                <li>Subjects enrolled -500</li>
+            </ul>
+            </div>
+            <div class="payment-tab">
                 <h1>Total Outstanding Balance: 12,000</h1>
                 <span>Please choose mode of payment</span>
                 <div class="paybtns">
