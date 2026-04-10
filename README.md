@@ -1,5 +1,13 @@
 
+Install dependencies:
+```bash
+npm install
+```
 
+To start:
+```bash
+npm run dev
+```
 
 # React + Vite
 
