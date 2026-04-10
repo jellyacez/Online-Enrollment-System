@@ -1,5 +1,4 @@
-Install Dependencies:
-[npm install]
+
 
 
 # React + Vite
