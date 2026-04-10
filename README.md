@@ -1,22 +1,24 @@
-
 Install dependencies:
+
 ```bash
-npm install
+npm i && npm i react-router-dom
 ```
 
 To start:
+
 ```bash
 npm run dev
 ```
+
 ## TODO:
 
 - Side Bar - []
-- Enrollment process of student - [] 
+- Enrollment process of student - []
 - Registering of Student Account (Admin) - []
-- Login of student - [] 
-- Subject Dashboard - [] 
-- Home Dashboard - [] 
-- Student Management - [] 
+- Login of student - []
+- Subject Dashboard - []
+- Home Dashboard - []
+- Student Management - []
   - Addition of Subject - []
   - Dropping of Subject - []
   - Updating of Subject - []
