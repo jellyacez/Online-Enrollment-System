@@ -44,6 +44,7 @@
 }
 #gcash{
 background-color:#1972F9 ;
+color: white;
 }
 #maya{
 background-color: black;
@@ -55,4 +56,19 @@ background-color: aqua;
 }
 #paypal{
 background-color: #2d67be;
+color: white;
+}
+.generalInfo{
+    display:grid;
+    grid-template-columns: auto auto;
+}
+#studentContainer h4{
+    text-align: center;
+}
+#studentInfo {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+#studentSubject tr td{
+    padding: 2rem;
 }
