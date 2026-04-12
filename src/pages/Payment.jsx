@@ -14,7 +14,7 @@ export default function Payment() {
 
                     <div id="studentInfo">
                         <span>Student Id: 000001</span>
-                        <span>Name: Dwigth Louie P. Lagazon</span>
+                        <span>Name: Luigi John B. Dandan</span>
                         <span>Course: Bachelor of Information Technology</span>
                         <span>Year: 3rd Year</span>
                     </div>
