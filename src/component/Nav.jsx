@@ -28,25 +28,3 @@ function Navigation(){
 export default Navigation;
 
 
-
-<aside className='sidebar-left'>
-            <div className="sidebar-inner">
-                <div id="logo">
-                    <h2>Header</h2>
-                </div>
-                <div id="links">
-                    <div className="linkContainer">
-                        <Link to="/">Home</Link>
-                    </div>
-                    <div className="linkContainer">
-                        <Link to="/payment">Payment</Link>
-                    </div>
-                    <div className="linkContainer">
-                        <Link to="/about">About</Link>
-                    </div>
-
-                </div>
-
-
-            </div>
-        </aside>
