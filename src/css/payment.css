@@ -1,7 +1,18 @@
+:root {
+  --text: #0e0b0a;
+  --text-h: #08060d;
+  --bg: #fefcfb;
+  --priamry:#fa6d06;
+  --secondary:#e2b198;
+  --accent:#e18354;
+  --border: #e5e4e7;
+  
+}
 *,html,body{
     margin:0;
     padding:0;
     box-sizing: border-box;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
 }
 main{
     margin-left:260px;
@@ -9,6 +20,87 @@ main{
     background-color: var(--bg);
     padding:20px
 }
+.generalInfo{
+    display:grid;
+    grid-template-columns: 2fr 1fr;
+    gap:1.6rem
+    
+}
+
+
+#studentContainer h4{
+    text-align: center;
+}
+
+
+
+/* Student Info Area*/
+#studentInfo {
+    display: grid;
+    grid-template-columns: auto auto;
+    width:100%;
+    gap:10px;
+    padding-bottom: 0.70rem;
+}
+#studentInfo span{
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: #f8fafc;
+  padding: 0.5rem 0.9rem;
+ 
+  border: 1px solid #eef2f6;
+
+}
+/* End of Student Info Area*/
+
+
+
+/* Student Subject Area*/
+#studentSubject tr td{
+    padding: 2rem;
+}
+.student-table thead tr {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent) 100%);
+    color: white;
+    text-align: left;
+    font-weight: bold;
+}
+
+.student-table th{
+    padding: 12px 15px;
+}
+.student-table tbody td{
+    padding: 0.65rem 1rem;
+}
+
+
+.student-table tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.student-table tbody tr:nth-of-type(even) {
+    background-color: #f8f9fa;
+}
+
+
+.student-table tbody tr:hover {
+    background-color: #f1f3f5;
+    transition: 0.3s ease;
+}
+/* End of Student Subject Area*/
+
+/* Fees Area*/
+#feesContainer{
+    padding-left: 10px;
+}
+
+
+
+/* End of Fees Area*/
+
+
+/* Transaction Area*/
+
 .paybtns {
     display: flex;
     flex-direction: column;
@@ -64,17 +156,4 @@ background-color: aqua;
 background-color: #2d67be;
 color: white;
 }
-.generalInfo{
-    display:grid;
-    grid-template-columns: auto auto;
-}
-#studentContainer h4{
-    text-align: center;
-}
-#studentInfo {
-    display: grid;
-    grid-template-columns: auto auto;
-}
-#studentSubject tr td{
-    padding: 2rem;
-}
+/*End of Transaction Area*/
