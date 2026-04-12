@@ -1,13 +1,52 @@
 import { Link } from 'react-router-dom'; //this is react "Link", must be used instead of 'link'
+import "../css/index.css";
 function Navigation(){
     return(
-        <nav>
-        <div id="logo"></div>
-        <div id="links">
-            <Link to="/">Home</Link>
-            <Link to="/payment">Payment</Link>
-        </div>
-        </nav>
+<aside className='sidebar-left'>
+            <div className="sidebar-inner">
+                <div id="logo">
+                    <h2>Header</h2>
+                </div>
+                <div id="links">
+                    <div className="link-container">
+                        <Link to="/">Home</Link>
+                    </div>
+                    <div className="link-container">
+                        <Link to="/payment">Payment</Link>
+                    </div>
+                    <div className="link-container">
+                        <Link to="/about">About</Link>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </aside>
     )
 }
 export default Navigation;
+
+
+
+<aside className='sidebar-left'>
+            <div className="sidebar-inner">
+                <div id="logo">
+                    <h2>Header</h2>
+                </div>
+                <div id="links">
+                    <div className="linkContainer">
+                        <Link to="/">Home</Link>
+                    </div>
+                    <div className="linkContainer">
+                        <Link to="/payment">Payment</Link>
+                    </div>
+                    <div className="linkContainer">
+                        <Link to="/about">About</Link>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </aside>

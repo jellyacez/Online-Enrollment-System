@@ -1,6 +1,6 @@
 import '../css/index.css';
 export default function Homepage(){
     return(
-        <div>example home</div>
+        <div id="aaa">example home</div>
     )
 }
