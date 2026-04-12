@@ -20,6 +20,7 @@ export default function Payment() {
                     </div>
 
                     <div className='studentSubject-container'>
+                        <div><h4>Student Subjects</h4></div>
                         <table className='student-table'>
                             <thead>
                                 <tr>
@@ -152,7 +153,7 @@ export default function Payment() {
                            
                         </table>
 
-                        <div id="totalFee">
+                        <div id="total-fee">
                             <span>Total Fee: </span>
                             <span>33,600.00</span>
                         </div>
