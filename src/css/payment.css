@@ -22,13 +22,14 @@ main{
 }
 .generalInfo{
     display:grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1.5fr 1fr;
     gap:1.6rem
     
 }
 
 
 #studentContainer h4{
+    font-size: 2.55rem;
     text-align: center;
 }
 
@@ -56,8 +57,8 @@ main{
 
 
 /* Student Subject Area*/
-#studentSubject tr td{
-    padding: 2rem;
+.student-table {
+    width:100%;
 }
 .student-table thead tr {
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent) 100%);
@@ -76,6 +77,7 @@ main{
 
 .student-table tbody tr {
     border-bottom: 1px solid #e0e0e0;
+    
 }
 
 .student-table tbody tr:nth-of-type(even) {
@@ -90,10 +92,32 @@ main{
 /* End of Student Subject Area*/
 
 /* Fees Area*/
-#feesContainer{
-    padding-left: 10px;
+#fees-container{
+    padding:1rem 1.5rem;
+    text-align: center;
+   
+}
+#fees-container h4{
+    font-size: 2.55rem;
+}
+#fees-container th{
+    padding: 0.5rem 1rem;
 }
 
+#table-container tr{
+border-bottom: 1px solid gray;
+    border-style: dashed;
+}
+#table-container th{
+    font-weight: 700;
+    text-align: left;
+}
+.info-row{
+    display: flex;
+    padding:10px 12px;
+    justify-content: space-between;
+    gap:0.5rem;
+}
 
 
 /* End of Fees Area*/

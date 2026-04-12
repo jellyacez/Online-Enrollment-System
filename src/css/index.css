@@ -19,8 +19,8 @@
 position: fixed;
 top:0;
 left:0;
-width:260px;
-min-width: 260px;
+width:10;
+min-width: 10%;
 height:100vh;
 background: linear-gradient(45deg, var(--secondary) 0%, var(--accent) 100%);
 overflow-y:auto;

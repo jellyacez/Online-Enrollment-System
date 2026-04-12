@@ -83,12 +83,12 @@ export default function Payment() {
                     </div>
                 </div>
 
-                <div id="feesContainer">
+                <div id="fees-container">
                     <div>
                         <h4>Assessed Fees</h4>
                     </div>
 
-                    <div id="tableContainer">
+                    <div id="table-container">
                         <table>
                             <thead>
                                 <tr>
@@ -96,13 +96,14 @@ export default function Payment() {
                                     <th>Cost</th>
                                 </tr>
                             </thead>
+                        <tbody>
 
+                          
                             <tr>
                                 <td>
                                     <details>
                                         <summary>
                                             <span>Misc & Service</span>
-                                            <span>1600</span>
                                         </summary>
 
                                         <div className='info-row'>
@@ -136,9 +137,9 @@ export default function Payment() {
                                         </div>
                                     </details>
                                 </td>
+                                <td>1600</td>
                             </tr>
-
-                            <tr>
+                             <tr>
                                 <td>Units Fee</td>
                                 <td>30,000.000</td>
                             </tr>
@@ -147,6 +148,8 @@ export default function Payment() {
                                 <td>Tuition Fee</td>
                                 <td>21,000.00</td>
                             </tr>
+                        </tbody>
+                           
                         </table>
 
                         <div id="totalFee">
