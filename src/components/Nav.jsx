@@ -72,7 +72,7 @@ function Navigation() {
                 to="/student-management"
                 className={({ isActive }) => (isActive ? "active-tab" : "")}
               >
-                Student Management
+                Manage Subjects
               </NavLink>
             </div>
             <div className="link-container">
