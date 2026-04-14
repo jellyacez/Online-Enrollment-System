@@ -71,15 +71,6 @@ export default function ManageSubjects() {
     setActiveView("enrolled");
   };
 
-  const handleDropSubject = (DropSubject) => {
-    setMySubjects(mySubjects.filter((subj) => subj.id !== DropSubject.id));
-    setAvailableSubjects([...availableSubjects, DropSubject]);
-
-    const updatedSelection = { ...selectedSection };
-    delete updatedSelection[DropSubject.id];
-    setSelectedSection(updatedSelection);
-  };
-
   // for change section
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [subjectoEdit, setSubjectToEdit] = useState(null);
@@ -179,6 +170,31 @@ export default function ManageSubjects() {
     setIsChangeModalOpen(false);
     setSubjectToEdit(null);
   };
+
+  //for drop confirmation modal
+  const [isDropModalOpen, setIsDropModalOpen] = useState(false);
+  const [subjectToDrop, setSubjectToDrop] = useState(null);
+
+  const openDropConfirm = (subject) => {
+    setSubjectToDrop(subject);
+    setIsDropModalOpen(true);
+  };
+
+  const executeDrop = () => {
+    if (!subjectToDrop) return;
+
+    setMySubjects(mySubjects.filter((subj) => subj.id !== subjectToDrop.id));
+    setAvailableSubjects([...availableSubjects, subjectToDrop]);
+
+    const updatedSelection = { ...selectedSection };
+    delete updatedSelection[subjectToDrop.id];
+    setSelectedSection(updatedSelection);
+
+    setIsDropModalOpen(false);
+    setSubjectToDrop(null);
+    setActiveView("enrolled");
+  };
+
   return (
     <div id="aaa" className="manage-subjects-container">
       <div className="header">
@@ -245,7 +261,7 @@ export default function ManageSubjects() {
                       </button>
                       <button
                         className="dropButton"
-                        onClick={() => handleDropSubject(subject)}
+                        onClick={() => openDropConfirm(subject)}
                       >
                         Drop
                       </button>
@@ -316,6 +332,7 @@ export default function ManageSubjects() {
           )}
         </div>
       )}
+      {/* Change Section modal  */}
       {isChangeModalOpen && subjectoEdit && (
         <div className="modalOverlay">
           <div className="modalContent">
@@ -359,6 +376,46 @@ export default function ManageSubjects() {
                 disabled={newSection === subjectoEdit.section}
               >
                 Confirm Change
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Drop Execution Modal */}
+      {isDropModalOpen && subjectToDrop && (
+        <div className="modalOverlay">
+          <div className="modalContent">
+            <h3 className="modalTitle" style={{ color: "#dc3545" }}>
+              Confirm Drop
+            </h3>
+            <p className="modalSubtitle" style={{ marginBottom: "8px" }}>
+              Are you sure you want to drop{" "}
+              <strong>
+                {subjectToDrop.code} - {subjectToDrop.name}
+              </strong>
+              ?
+            </p>
+            <p
+              className="modalSubtitle"
+              style={{ fontSize: "13px", opacity: 0.7 }}
+            >
+              This will remove the subject from your schedule and free up a
+              slot. You will have to add the subject again if you have changed
+              your mind.
+            </p>
+            <div className="modalActions">
+              <button
+                className="changeButton"
+                onClick={() => {
+                  setIsDropModalOpen(false);
+                  setSubjectToDrop(null);
+                }}
+              >
+                Cancel
+              </button>
+              <button className="dropButton" onClick={executeDrop}>
+                Yes, Drop Subject
               </button>
             </div>
           </div>
