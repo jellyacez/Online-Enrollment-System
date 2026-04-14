@@ -17,6 +17,8 @@ function Navigation() {
   };
 
   useEffect(() => {
+    setIsOpen(false);
+
     setTimeout(() => {
       const activeElement = document.querySelector(".active-tab");
       const linksContainer = document.getElementById("links");

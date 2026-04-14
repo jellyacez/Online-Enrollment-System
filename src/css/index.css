@@ -162,3 +162,12 @@
     opacity 0.2s;
 }
 /* End of Nav*/
+
+@media (max-width: 768px) {
+  #aaa,
+  .portal-layout {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    padding: 16px;
+  }
+}
