@@ -74,6 +74,10 @@ export default function ManageSubjects() {
   const handleDropSubject = (DropSubject) => {
     setMySubjects(mySubjects.filter((subj) => subj.id !== DropSubject.id));
     setAvailableSubjects([...availableSubjects, DropSubject]);
+
+    const updatedSelection = { ...selectedSection };
+    delete updatedSelection[DropSubject.id];
+    setSelectedSection(updatedSelection);
   };
 
   // for change section
@@ -256,7 +260,7 @@ export default function ManageSubjects() {
 
       {ActiveView === "add" && (
         <div className="table-container">
-          {mySubjects.length === 0 ? (
+          {availableSubjects.length === 0 ? (
             <div className="emptyState">
               No subjects available at the moment.
             </div>
