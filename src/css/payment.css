@@ -2,240 +2,260 @@
   --text: #0e0b0a;
   --text-h: #08060d;
   --bg: #fefcfb;
-  --priamry:#fa6d06;
-  --secondary:#e2b198;
-  --accent:#e18354;
+  --priamry: #fa6d06;
+  --secondary: #e2b198;
+  --accent: #e18354;
   --border: #e5e4e7;
-  --accentbg:#f8fafc;
+  --accentbg: #f8fafc;
 }
-*,html,body::before,::after{
-    margin:0;
-    padding:0;
-    box-sizing: border-box;
-    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+*,
+html,
+body::before,
+::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    sans-serif;
+}
+main {
+  margin-left: 260px;
+  min-height: 100vh;
 
+  padding: 20px;
 }
-main{
-    margin-left:260px;
-    min-height: 100vh;
-    
-    padding:20px
-}
-.generalInfo{
-    display:grid;
-    grid-template-columns: 1.5fr 1fr;
-    gap:1.6rem;
-
-    
-}
-
-
-#studentContainer h4{
-    font-size: 2.55rem;
-    text-align: center;
-    padding: 0.65rem 1rem;
-    
-    background-color: var(--secondary);
-}
-#studentContainer{
-        background-color: var(--bg);
+.generalInfo {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1.6rem;
 }
 
+#studentContainer h4 {
+  font-size: 2.55rem;
+  text-align: center;
+  padding: 0.65rem 1rem;
+
+  background-color: var(--secondary);
+}
+#studentContainer {
+  background-color: var(--bg);
+}
 
 /* Student Info Area*/
 #studentInfo {
-    display: grid;
-    grid-template-columns: auto auto;
-    width:100%;
-    gap:10px;
-    padding-bottom: 0.70rem;
+  display: grid;
+  grid-template-columns: auto auto;
+  width: 100%;
+  gap: 10px;
+  padding-bottom: 0.7rem;
 }
-#studentInfo span{
+#studentInfo span {
   font-size: 0.95rem;
   font-weight: 500;
   background: #f8fafc;
-  margin-top:10px;
+  margin-top: 10px;
   padding: 0.5rem 0.9rem;
- 
-  border: 1px solid #eef2f6;
 
+  border: 1px solid #eef2f6;
 }
 /* End of Student Info Area*/
 
-
-
 /* Student Subject Area*/
 .student-table {
-    width:100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
-    
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
 }
 .student-table thead tr {
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent) 100%);
-    color: white;
-    text-align: left;
-    font-weight: bold;
-    
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent) 100%);
+  color: white;
+  text-align: left;
+  font-weight: bold;
 }
 
-.student-table th{
-    padding: 12px 15px;
-    
+.student-table th {
+  padding: 12px 15px;
 }
-.student-table tbody td{
-    padding: 0.65rem 1rem;
-     
-    
+.student-table tbody td {
+  padding: 0.65rem 1rem;
 }
-
 
 .student-table tbody tr {
-    border-bottom: 1px solid #e0e0e0;
-    
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .student-table tbody tr:nth-of-type(even) {
-    background-color: #f8f9fa;
+  background-color: #f8f9fa;
 }
 
-
 .student-table tbody tr:hover {
-    background-color: #f1f3f5;
-    transition: 0.3s ease;
+  background-color: #f1f3f5;
+  transition: 0.3s ease;
 }
 /* End of Student Subject Area*/
 
-
-
 /* Fees Area*/
-#fees-container{
-    padding:0.85rem 1rem;
-    text-align: center;
-    border: 1px solid black;
-        background-color: var(--bg);
-   
+#fees-container {
+  padding: 0.85rem 1rem;
+  text-align: center;
+  border: 1px solid black;
+  background-color: var(--bg);
 }
-#fees-container h4{
-    font-size: 2.55rem;
+#fees-container h4 {
+  font-size: 2.55rem;
 }
-#fees-container th{
-    padding: 0.5rem 1rem;
+#fees-container th {
+  padding: 0.5rem 1rem;
 }
 
-#table-container th{
-padding-left:0;
-text-align: left;
+#table-container th {
+  padding-left: 0;
+  text-align: left;
 }
-#table-container td{
-padding-left:0;
-text-align: left;
+#table-container td {
+  padding-left: 0;
+  text-align: left;
 }
-#table-container tbody td{
-padding:0.85rem 1rem;
+#table-container tbody td {
+  padding: 0.85rem 1rem;
 }
 #table-container table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
-#table-container tr{
-border-bottom: 1px solid gray;
-
+#table-container tr {
+  border-bottom: 1px solid gray;
 }
-#table-container thead th tr{
-    padding:0.85rem 1.rem;
-    font-weight: 700;
-    text-align: left;
+#table-container thead th tr {
+  padding: 0.85rem 1rem;
+  font-weight: 700;
+  text-align: left;
 }
 #table-container td:last-child,
 #table-container th:last-child {
-    text-align: right;
-    padding-right: 0;
+  text-align: right;
+  padding-right: 0;
 }
 #table-container tbody tr:nth-of-type(even) {
-    background-color: #f8f9fa;
+  background-color: #f8f9fa;
 }
-.info-row{
-    display: flex;
-    padding:10px 12px;
-    justify-content: space-between;
-    gap:0.5rem;
-    border-bottom: var(--border);
+.info-row {
+  display: flex;
+  padding: 10px 12px;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-bottom: var(--border);
 }
 .info-row:nth-of-type(even) {
-    background-color: #f8f9fa;
+  background-color: #f8f9fa;
 }
-#total-fee{
-    padding-top:1rem;
-    border-top-style: dashed 1px solid var(--accentbg);
-    display:flex;
-    justify-content: space-between;
-    gap:0.5rem;
+#total-fee {
+  padding-top: 1rem;
+  border-top-style: dashed 1px solid var(--accentbg);
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 /* End of Fees Area*/
 
-
 /* Transaction Area*/
 
 .paybtns {
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-    max-width: 600px;
-    align-items: center;
-    padding-right:1rem;
-    
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 600px;
+  align-items: center;
+  padding-right: 1rem;
 }
 .paybtns button {
-    width: 100%;
+  width: 100%;
 }
 .paybtn {
-    margin:0 auto;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  font-size:1.2em;
+  font-size: 1.2em;
   font-weight: 500;
   width: 250px;
   padding: 0.5em 1em;
-  cursor:pointer;
-  border:1px solid none;
+  cursor: pointer;
+  border: 1px solid none;
   border-radius: 15px;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
 }
-.paybtn img{
-    width:1.5rem;
-    margin-right:0.5em
+.paybtn img {
+  width: 1.5rem;
+  margin-right: 0.5em;
 }
 
-.payment-tab{
-    margin:0 auto;
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid black;
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif
+.payment-tab {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid black;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
 }
-.payment-tab h1{
-     font-weight: 700;
+.payment-tab h1 {
+  font-weight: 700;
 }
-#gcash{
-background-color:#1972F9 ;
-color: white;
+#gcash {
+  background-color: #1972f9;
+  color: white;
 }
-#maya{
-background-color: black;
-color: rgb(0, 214, 0);
+#maya {
+  background-color: black;
+  color: rgb(0, 214, 0);
 }
-#tyme{
-background-color: aqua;
-    color:black;
+#tyme {
+  background-color: aqua;
+  color: black;
 }
-#paypal{
-background-color: #2d67be;
-color: white;
+#paypal {
+  background-color: #2d67be;
+  color: white;
+}
+
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.subjects-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.subjects-table th {
+  padding: 16px;
+  background-color: rgba(226, 177, 152, 0.1);
+  color: #08060d;
+  font-weight: 600;
+  font-size: 14px;
+  border-bottom: 2px solid #e5e4e7;
+}
+
+.subjects-table td {
+  padding: 16px;
+  border-bottom: 1px solid #e5e4e7;
+  color: #0e0b0a;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.subjects-table tr:hover td {
+  background-color: rgba(254, 252, 251, 0.5);
 }
 /*End of Transaction Area*/
