@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../css/index.css";
 import "../css/ManageSubjects.css";
 export default function ManageSubjects() {
   const [ActiveView, setActiveView] = useState("enrolled");
 
-  const [mySubjects, setMySubjects] = useState([
+  const defaultmySubjects = [
     {
       id: 1,
       code: "SOCSCI 313",
@@ -21,9 +21,9 @@ export default function ManageSubjects() {
       section: "Info 3-C",
       schedule: "TTh 7:00-10:00 AM",
     },
-  ]);
+  ];
 
-  const [availableSubjects, setAvailableSubjects] = useState([
+  const defaultAvailableSubjects = [
     {
       id: 3,
       code: "IAS 323",
@@ -40,7 +40,36 @@ export default function ManageSubjects() {
       section: "Info 3-C",
       schedule: "TTh 2:30-4:00 PM",
     },
-  ]);
+    {
+      id: 5,
+      code: "SIA 323",
+      name: "System Integration and Architecture 1",
+      unit: 3,
+      section: "Info 3-C",
+      schedule: "TTh 2:30-4:00 PM",
+    },
+  ];
+
+  const [mySubjects, setMySubjects] = useState(() => {
+    const saved = localStorage.getItem("eduEnroll_mySubjects");
+    return saved ? JSON.parse(saved) : defaultmySubjects;
+  });
+
+  const [availableSubjects, setAvailableSubjects] = useState(() => {
+    const saved = localStorage.getItem("eduEnroll_availableSubjects");
+    return saved ? JSON.parse(saved) : defaultAvailableSubjects;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("eduEnroll_mySubjects", JSON.stringify(mySubjects));
+  }, [mySubjects]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "eduEnroll_availableSubjects",
+      JSON.stringify(availableSubjects),
+    );
+  }, [availableSubjects]);
 
   // for handling adding and dropping subjects
 
@@ -137,6 +166,23 @@ export default function ManageSubjects() {
         section: "Info 3-B",
         schedule: "MTh 10:00-11:30 AM",
         slots: "28/40 slots",
+      },
+      {
+        section: "Info 3-C",
+        schedule: "TTh 2:30-4:00 PM",
+        slots: "Enrolled",
+      },
+    ],
+    "SIA 323": [
+      {
+        section: "Info 3-A",
+        schedule: "MTue 7:00-8:30 AM",
+        slots: "Full",
+      },
+      {
+        section: "Info 3-B",
+        schedule: "MWed 10:00-11:30 AM",
+        slots: "34/40 slots",
       },
       {
         section: "Info 3-C",
