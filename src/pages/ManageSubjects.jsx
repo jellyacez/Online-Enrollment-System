@@ -176,12 +176,12 @@ export default function ManageSubjects() {
     "SIA 323": [
       {
         section: "Info 3-A",
-        schedule: "MTue 7:00-8:30 AM",
+        schedule: "MT 7:00-8:30 AM",
         slots: "Full",
       },
       {
         section: "Info 3-B",
-        schedule: "MWed 10:00-11:30 AM",
+        schedule: "MW 10:00-11:30 AM",
         slots: "34/40 slots",
       },
       {
