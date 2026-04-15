@@ -4,11 +4,12 @@ import "../css/about.css";
 
 // --- SWIPER IMPORTS ---
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
 // Swiper specific CSS
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import "swiper/css/effect-fade";
 
 import universityLogo from "../assets/UniLogo.png";
 import logo2 from "../assets/UniLogo3.png";
@@ -39,6 +40,8 @@ const AboutPage = () => {
         spaceBetween={0}
         slidesPerView={1}
         loop={true}
+        effect={"fade"}
+        fadeEffect={{ crossFade: true }}
         autoplay={{
           delay: 4500,
           disableOnInteraction: false,
@@ -46,7 +49,7 @@ const AboutPage = () => {
         }}
         pagination={{ clickable: true }}
         navigation={true}
-        modules={[Autoplay, Pagination, Navigation]}
+        modules={[Autoplay, Pagination, Navigation, EffectFade]}
         className="welcome-carousel"
       >
         <SwiperSlide>

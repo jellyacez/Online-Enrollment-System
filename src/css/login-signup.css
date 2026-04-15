@@ -16,6 +16,7 @@
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 460px;
+  position: relative;
 }
 
 .Uni-Logo {
@@ -182,6 +183,29 @@
 
 .facebook-btn:hover {
   background-color: #166fe5;
+}
+
+.backButton {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  background: none;
+  border: none;
+  color: #888888; /* Subtle gray */
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+  padding: 0;
+}
+
+.backButton:hover {
+  color: #fa6d06; /* Changes to Acez Orange on hover */
+  transform: translateX(-3px); /* Cute little slide-left animation */
 }
 
 /* ===== RESPONSIVE ===== */

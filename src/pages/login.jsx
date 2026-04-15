@@ -29,6 +29,9 @@ export default function Login() {
   return (
     <div className="login-page">
       <div className="login-container">
+        <button className="backButton" onClick={() => navigate("/")}>
+          &larr; Back to Home
+        </button>
         <img src={Logo} className="Uni-Logo" alt="University Logo" />
         <h2>{isLogin ? "Welcome Back" : "Create an Account"}</h2>
 
