@@ -7,6 +7,7 @@ import "../components/ClassSchedule/ClassSchedule.css";
 import "../css/ManageSubjects.css";
 import Logo from "../assets/UniLogo.png";
 import Logo2 from "../assets/UniLogo2.png";
+import AboutPage from "./about";
 
 const SAMPLE_NOTIFICATIONS = [
   {
@@ -301,6 +302,7 @@ export default function Homepage() {
     { key: "calendar", icon: "📅", label: "Calendar", color: "#D46A00" },
     { key: "balance", icon: "💰", label: "Balance", color: "#B84D00" },
     { key: "enrollment", icon: "📝", label: "Enrollment", color: "#FF9933" },
+    { key: "about us", icon: "ℹ️", label: "About Us", color: "#D46A00" },
   ];
 
   const filteredCards = dashboardCards.filter((c) =>
@@ -928,6 +930,9 @@ export default function Homepage() {
           </div>
         </div>
       )}
+
+      {/* About Us MODAL */}
+      {activeModal === "about us" && navigate("/about")}
 
       {/* EXIT MODAL */}
       {activeModal === "exit" && (
