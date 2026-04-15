@@ -242,7 +242,7 @@ export default function ManageSubjects() {
   };
 
   return (
-    <div id="aaa" className="manage-subjects-container">
+    <div className="manage-subjects-container">
       <div className="header">
         <div>
           <h3 className="section-title">Manage Subjects</h3>
@@ -378,6 +378,7 @@ export default function ManageSubjects() {
           )}
         </div>
       )}
+
       {/* Change Section modal  */}
       {isChangeModalOpen && subjectoEdit && (
         <div className="modalOverlay">

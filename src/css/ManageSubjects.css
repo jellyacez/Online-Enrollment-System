@@ -1,8 +1,6 @@
 .manage-subjects-container {
   background-color: white;
-  border:
-    1px,
-    solid #e5e4e7;
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 32px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);

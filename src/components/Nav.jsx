@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom"; //this is react "Link", must be used instead of 'link'
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import MenuIcon from "../assets/menu-svgrepo-com.svg";
 import "../css/index.css";
 
-
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
-
+  const navigate = useNavigate();
   const location = useLocation();
+  
+  // THIS WAS THE MISSING PIECE! 
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  
   const [sliderStyle, setSliderStyle] = useState({
     top: 0,
     height: 0,
@@ -17,7 +20,21 @@ function Navigation() {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
+  
+  const handleLogoutClick = (e) => {
+    e.preventDefault(); 
+    setShowLogoutModal(true); 
+  };
+  
+  const confirmLogout = () => {
+    setShowLogoutModal(false); 
+    navigate("/login"); 
+  };
 
+  const cancelLogout = () => {
+    setShowLogoutModal(false);
+  };
+  
   useEffect(() => {
     setIsOpen(false);
 
@@ -37,6 +54,12 @@ function Navigation() {
       }
     }, 10);
   }, [location]);
+  
+  // this bad boy would make sure menu is not in the game when login comes walking on the red carpet
+  if (location.pathname.toLowerCase().includes('login')) {
+    return null; 
+  }
+  
   return (
     <>
     <div className="menu-container">
@@ -97,10 +120,81 @@ function Navigation() {
                 About
               </NavLink>
             </div>
+            <div className="link-container">
+              {/* 4. Changed from NavLink to a clickable anchor tag that opens our modal */}
+              <a 
+                href="#" 
+                onClick={handleLogoutClick}
+                style={{ cursor: "pointer", display: "block", textDecoration: "none" }}
+              >
+                Logout
+              </a>
+            </div>
           </div>
         </div>
       </aside>
+
+      {/*Modal for Logout*/}
+      {showLogoutModal && (
+        <div style={modalOverlayStyle}>
+          <div style={modalContentStyle}>
+            <h3 style={{ marginBottom: "24px", color: "#333" }}>Are you sure you want to logout?</h3>
+            <div style={{ display: "flex", justifyContent: "center", gap: "16px" }}>
+              <button onClick={cancelLogout} style={cancelButtonStyle}>
+                Cancel
+              </button>
+              <button onClick={confirmLogout} style={confirmButtonStyle}>
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
+
+// Inline styles for the modal to keep it perfectly centered and looking clean.
+const modalOverlayStyle = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100vw",
+  height: "100vh",
+  backgroundColor: "rgba(0, 0, 0, 0.5)", 
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 9999, 
+};
+
+const modalContentStyle = {
+  backgroundColor: "#fff",
+  padding: "32px",
+  borderRadius: "8px",
+  boxShadow: "0 8px 24px rgba(0, 0, 0, 0.2)",
+  textAlign: "center",
+  minWidth: "300px",
+};
+
+const cancelButtonStyle = {
+  padding: "10px 20px",
+  backgroundColor: "#f4f4f9",
+  color: "#333",
+  border: "1px solid #ccc",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontWeight: "bold",
+};
+
+const confirmButtonStyle = {
+  padding: "10px 20px",
+  backgroundColor: "#fa6d06", 
+  color: "#fff",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontWeight: "bold",
+};
+
 export default Navigation;

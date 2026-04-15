@@ -1,0 +1,179 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4f4f9;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== LOGIN CONTAINER ===== */
+.login-container {
+  background-color: #ffffff;
+  padding: 48px 40px;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 460px;
+}
+
+.login-container h2 {
+  text-align: center;
+  color: #333333;
+  margin-bottom: 32px;
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+/* ===== FORM INPUTS ===== */
+.info-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-group label {
+  margin-bottom: 8px;
+  color: #555555;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.info-group input {
+  padding: 14px;
+  border: 2px solid #cccccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease;
+}
+
+.info-group input:focus {
+  outline: none;
+  border-color: #fa6d06;
+  box-shadow: 0 0 0 3px rgba(250, 109, 6, 0.15);
+}
+
+/* ===== SUBMIT BUTTON ===== */
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: #fa6d06;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  margin-top: 8px;
+}
+
+.submit-btn:hover {
+  background-color: #e06205;
+}
+
+.submit-btn:active {
+  transform: scale(0.98);
+}
+
+/* ===== TOGGLE TEXT ===== */
+.toggle-wrapper {
+  display: flex;
+  margin-top: 16px;
+}
+
+.toggle-text {
+  color: #555555;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.toggle-text strong {
+  color: #fa6d06;
+}
+
+.toggle-text:hover strong {
+  color: #e06205;
+  text-decoration: underline;
+}
+
+/* ===== DIVIDER ===== */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 24px 0;
+  color: #888888;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 2px solid #eeeeee;
+}
+
+.divider span {
+  padding: 0 16px;
+}
+
+/* ===== SOCIAL BUTTONS ===== */
+.social-login-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.social-btn:active {
+  transform: scale(0.98);
+}
+
+.social-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.google-btn {
+  background-color: #ffffff;
+  color: #333333;
+  border: 2px solid #cccccc;
+}
+
+.google-btn:hover {
+  background-color: #f9f9f9;
+}
+
+.facebook-btn {
+  background-color: #1877F2;
+  color: #ffffff;
+  border: none;
+}
+
+.facebook-btn:hover {
+  background-color: #166fe5;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 32px 24px;
+  }
+}

@@ -8,10 +8,9 @@
   --border: #e5e4e7;
 }
 #aaa {
-  margin-left: 260px;
   min-height: 100vh;
   background-color: var(--bg);
-  padding: 20px;
+  padding: 0px;
 }
 /* ALl of this are Nav*/
 .sidebar-left {
@@ -35,6 +34,40 @@
   transform: translateX(0);
 }
 
+html, body, #root {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden;
+}
+
+#root > * {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+}
+
+#aaa {
+  margin-left: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+.MenuButton {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: none;
+  font-size: 24px;
+  border: none;
+  cursor: pointer;
+  z-index: 1001;
+  color: #0e0b0a;
+  transition:
+    opacity 0.2s ease-in-out,
+    visibility 0.2s ease-in-out;
+}
 
 .show-button {
   opacity: 1;
