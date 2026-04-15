@@ -1,39 +1,63 @@
 import { useState } from "react";
+import { Link } from 'react-router-dom';
 import "../css/index.css";
 import "../css/payment.css";
 
-// https://brandfetch.com/gcash.com Gcash logo
-
-
 export default function Payment() {
-  const [selectedMethod, setSelectedMethod]= useState(null);
-  const [messege, setMessage] = useState("");
+  const [selectedMethod, setSelectedMethod] = useState(null);
+  const [message, setMessage] = useState({ text: "", type: "" });
   const [email, setEmail] = useState("");
-  const [loading,setloading] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [partialPayment, setPartialPayment] = useState("");
+  const [modal, setModal] = useState(false);
 
-  if(!selectedMethod){
-    setMessage ({text:"Please Select a payment method.",type:"error"});
+  const handlePayment = () => {
+    if (!selectedMethod) {
+      setMessage({ text: "Please Select a payment method.", type: "error" });
+      return;
     }
-  if(!email){
-    setMessage({text:"Email address is required to recieve a receipt.",type:"error"});
-  }
-  if((selectedMethod === "gcash" || selectedMethod === "maya" || selectedMethod === "gotyme") && !mobileNumber)
+    if (!email) {
+      setMessage({ text: "Email address is required to receive a receipt.", type: "error" });
+      return;
+    }
+    if ((selectedMethod === "gcash" || selectedMethod === "maya" || selectedMethod === "gotyme") && !mobileNumber) {
+      setMessage({ text: "Mobile number is required for this payment method.", type: "error" });
+      return;
+    }
 
-    setloading(true)
-    setMessage({text:"Prcoessing...",type:"Info"})
+    setModal(true);
+
     
 
-    setTimeout(()=>{
-      setloading(false)
-      setMessage({
-        text:`Payment of ₱52,600.00 via ${selectedMethod.toUpperCase()} processed. Reciept sent to ${email}`
-      });
-    },2000);
+   
+  };
 
-    const getMethodLabel = ()=> {
-      const methods = {gcash:"Gcash",paypal:"Paypal",maya:"Maya",gotyme:"Gotyme Bank"};
-      return methods(selectedMethod) || none;
-    }
+const confirmPayment = ()=>{
+setModal(false)
+   setTimeout(() => {
+    
+
+    setLoading(true);
+    setMessage({ text: "Processing...", type: "info" });
+
+      setLoading(false);
+      setMessage({
+        text: `Payment of ₱52,600.00 via ${selectedMethod.toUpperCase()} processed. Receipt sent to ${email}`,
+        type: "success"
+      });
+    }, 2000);
+}
+
+const cancelModal = ()=>{
+  setModal(false);
+}
+
+
+  const getMethodLabel = () => {
+    const methods = { gcash: "Gcash", paypal: "Paypal", maya: "Maya", gotyme: "Gotyme Bank" };
+    return methods[selectedMethod] || "None";
+  };
 
   return (
     <main className="main-containers">
@@ -88,7 +112,6 @@ export default function Payment() {
                   <td>
                     <details>
                       <summary>Misc & Service</summary>
-
                       <div className="info-row"><span>USC Fee</span><span>PHP150.00</span></div>
                       <div className="info-row"><span>Club Fee</span><span>PHP150.00</span></div>
                       <div className="info-row"><span>School Id Fee</span><span>PHP150.00</span></div>
@@ -99,12 +122,10 @@ export default function Payment() {
                   </td>
                   <td>1600</td>
                 </tr>
-
                 <tr>
                   <td>Units Fee</td>
-                  <td>30,000.000</td>
+                  <td>30,000.00</td>
                 </tr>
-
                 <tr>
                   <td>Tuition Fee</td>
                   <td>21,000.00</td>
@@ -150,29 +171,75 @@ export default function Payment() {
         </div>
 
         <div className="Selected-btn">
-        <span>Selected Method:</span>
-        <strong>{getMethodLabel}</strong>
+          <span>Selected Method:</span>
+          <strong>{getMethodLabel()}</strong>
         </div>
+        
         <div className="paybtns">
-          <button className="paybtn" id="gcash" onClick={setSelectedMethod("gotyme")}>
+          <button className="paybtn" id="gcash" onClick={() => setSelectedMethod("gcash")}>
             <img src="https://cdn.brandfetch.io/idU5cKFAqi/theme/dark/logo.svg" alt="Gcash-logo" />
             <span>Pay with Gcash</span>
           </button>
 
-          <button className="paybtn" id="maya" onClick={setSelectedMethod("maya")}>
+          <button className="paybtn" id="maya" onClick={() => setSelectedMethod("maya")}>
             <img src="https://cdn.brandfetch.io/idNZIam-Y9/w/200/h/200/theme/dark/icon.jpeg" alt="maya-logo" />
             <span>Pay with Maya</span>
           </button>
 
-          <button className="paybtn" id="gotyme" onClick={setSelectedMethod("gotyme")}>
-            <img src="https://cdn.brandfetch.io/idnIc2_J5Q/w/400/h/400/th eme/dark/icon.jpeg" alt="GoTyme-logo" />
+          <button className="paybtn" id="gotyme" onClick={() => setSelectedMethod("gotyme")}>
+            <img src="https://cdn.brandfetch.io/idnIc2_J5Q/w/400/h/400/theme/dark/icon.jpeg" alt="GoTyme-logo" />
             <span>Pay with GoTyme Bank</span>
           </button>
 
-          <button className="paybtn" id="paypal" onclickk={setSelectedMethod("paypal")}>
+          <button className="paybtn" id="paypal" onClick={() => setSelectedMethod("paypal")}>
             <img src="https://cdn.brandfetch.io/id-Wd4a4TS/theme/dark/id31tBizMM.svg" alt="Paypal-logo" />
             <span>Pay with PayPal</span>
           </button>
+
+          <div className="payment">
+            <input type="email" name="email" id=""
+              placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} />
+
+            <input type="tel" placeholder="Mobile Number" value={mobileNumber} onChange={(e) => setMobileNumber(e.target.value)} />
+
+            <div className="partial-payment">
+              <input type="number" step="0.1" name="number" placeholder="Pay partial amount (Optional)" value={partialPayment}
+                onChange={(e) => setPartialPayment(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <button className="confirm-btn" onClick={handlePayment} disabled={loading}>
+            {loading ? "Processing..." : `Confirm Payment ₱52,600.00`}
+          </button>
+    
+          {modal &&(
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <h3>Confirm Payment</h3>
+                <p>Are you sure you want to proceed with the payment of ₱52,600.00</p>
+                <p><strong>Payment Method:{getMethodLabel()}</strong></p>
+                <p><strong>Email:</strong> {email}</p>
+                {mobileNumber && <p><strong>Mobile:</strong> {mobileNumber}</p>}
+
+                <div className="modal-btns">
+                  <button onClick={confirmPayment} className="accept-pay">Confirm</button>
+                  <button onClick={cancelModal} className="cancel-btn">Cancel</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {message.text && (
+            <div className={`message-area ${message.type}`}>
+              {message.text}
+            </div>
+          )}
+
+          <div className="payment-footer">
+            <Link to="/">← Cancel and return</Link>
+            
+          </div>
         </div>
       </div>
     </main>
