@@ -948,7 +948,10 @@ export default function Homepage() {
               <button className="btn btn-secondary" onClick={closeModal}>
                 Cancel
               </button>
-              <button className="btn btn-danger" onClick={() => navigate("/")}>
+              <button
+                className="btn btn-danger"
+                onClick={() => navigate("/login")}
+              >
                 Yes, Logout
               </button>
             </div>

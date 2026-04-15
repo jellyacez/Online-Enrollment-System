@@ -7,6 +7,40 @@
   --color-accent: #e18354;
 }
 
+.about-welcome-section {
+  background: linear-gradient(
+    135deg,
+    var(--orange-500) 0%,
+    var(--orange-600) 50%,
+    var(--orange-700) 100%
+  );
+  color: var(--white);
+  padding-top: 15px;
+  padding-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+}
+
+.about-Logo {
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  padding-bottom: 5px;
+  margin-top: 0;
+}
+
 /*Logo Styling */
 .logo-container {
   display: flex;
@@ -30,9 +64,7 @@
 }
 
 .about-container {
-  background-color: var(
-    --color-bg
-  ); /* Fixed: changed url to background-color */
+  background-color: var(--color-bg);
   color: var(--color-text);
   font-family:
     "Inter",
@@ -40,8 +72,10 @@
     -apple-system,
     sans-serif;
   line-height: 1.6;
+  height: auto;
   min-height: 100vh;
   padding: 0 20px;
+  overflow-y: visible;
 }
 
 .about-wrapper {
@@ -202,7 +236,91 @@
   margin-bottom: 10px;
 }
 
-.about-container {
-  /* background-image: url('../assets/AcezLogo.svg'); */
-  height: 100vh;
+/* Header Right Section */
+.header-right {
+  display: flex;
+  align-items: center;
+  padding-right: 20px; /* Keeps it from touching the absolute edge of the screen */
+}
+
+/* Student Portal Button Styling */
+.portal-SignIn {
+  background-color: var(--color-bg); /* White/Off-white background */
+  color: var(--color-primary); /* Orange text */
+  border: 2px solid var(--color-bg);
+  padding: 10px 24px;
+  border-radius: 8px; /* Slightly rounded corners */
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover Effect: Inverts the colors */
+.portal-SignIn:hover {
+  background-color: transparent;
+  color: var(--color-bg); /* Turns text white */
+  border: 2px solid var(--color-bg); /* Keeps a white border */
+  transform: translateY(-2px); /* Lifts the button slightly */
+}
+
+/* --- SWIPER CAROUSEL STYLES --- */
+.welcome-carousel {
+  width: 100%;
+  height: 80vh; /* Adjust this to change how tall the slider is */
+  background-color: var(--color-text);
+}
+
+.slide-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.slide-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Dark gradient so the text is always readable over the image */
+.slide-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 80px 20px 40px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  color: white;
+  text-align: center;
+}
+
+.slide-caption h5 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  color: white; /* Uses your orange variable */
+  font-weight: 800;
+}
+
+.slide-caption p {
+  font-size: 1.1rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* Optional: Make the Swiper Arrows Orange */
+.swiper-button-next,
+.swiper-button-prev {
+  color: var(--color-primary) !important;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: var(--color-primary) !important;
 }

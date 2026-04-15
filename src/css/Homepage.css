@@ -467,7 +467,7 @@ body {
     var(--orange-700) 100%
   );
   color: var(--white);
-  padding: 32px;
+  padding: 32px !important;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -476,9 +476,10 @@ body {
 }
 
 .welcome-text h2 {
-  font-size: 1.6rem;
+  font-size: 1.6rem !important;
   font-weight: 800;
-  margin-bottom: 4px;
+  margin-bottom: 4px !important;
+  margin-top: 0 !important;
 }
 
 .highlight {
@@ -488,6 +489,7 @@ body {
 .welcome-text p {
   font-size: 1.1rem;
   opacity: 0.9;
+  margin-bottom: 0 !important;
 }
 
 .welcome-date {
@@ -545,7 +547,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 2rem !important;
   color: white;
   box-shadow: var(--shadow-md);
 }
@@ -1154,7 +1156,7 @@ body {
 
 .brand-icon .Uni-Logo {
   margin: auto;
-  width: 50px;
+  width: 50px !important;
 }
 
 /* ===== ANIMATIONS ===== */

@@ -13,11 +13,11 @@ export default function Routing() {
     <>
       {!isLoginPage}
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Homepage />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/student-management" element={<ManageSubjects />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/" element={<About />} />
       </Routes>
     </>
   );
