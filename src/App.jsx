@@ -6,18 +6,21 @@ import ManageSubjects from "./pages/ManageSubjects";
 import Login from "./pages/login";
 
 export default function Routing() {
-
   const location = useLocation();
-  const isLoginPage = location.pathname.toLowerCase().includes('login');
+  const isLoginPage = location.pathname.toLowerCase().includes("login");
+  const isHomepage = location.pathname === "/";
+
   return (
     <>
-    {!isLoginPage && <Navbar />}
-    <Routes>
-      <Route path="/" element={<Homepage />} />
-      <Route path="/payment" element={<Payment />} />
-      <Route path="/student-management" element={<ManageSubjects />} />
-      <Route path="/login" element={<Login/>} />
-    </Routes>
+      {/* Homepage has its own nav — skip the old Navbar */}
+      {!isLoginPage && !isHomepage && <Navbar />}
+
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/student-management" element={<ManageSubjects />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
     </>
   );
 }
