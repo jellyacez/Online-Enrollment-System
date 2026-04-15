@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import MenuIcon from "../assets/menu-svgrepo-com.svg";
 import "../css/index.css";
 
 function Navigation() {
@@ -63,12 +62,7 @@ function Navigation() {
   return (
     <>
     <div className="menu-container">
-      <button
-        className={`MenuButton ${isOpen ? "hide-button" : "show-button"}`}
-        onClick={toggleSidebar}
-      >
-        <img src={MenuIcon} alt="Menu" />
-      </button>
+      
       </div>
       <aside className={`sidebar-left ${isOpen ? "open" : ""}`}>
         <div className="sidebar-inner">
