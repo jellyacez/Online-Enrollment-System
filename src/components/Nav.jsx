@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom"; //this is react "Link", must be used instead of 'link'
-import "../css/index.css";
 import MenuIcon from "../assets/menu-svgrepo-com.svg";
+import "../css/index.css";
+
+
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -37,12 +39,14 @@ function Navigation() {
   }, [location]);
   return (
     <>
+    <div className="menu-container">
       <button
         className={`MenuButton ${isOpen ? "hide-button" : "show-button"}`}
         onClick={toggleSidebar}
       >
         <img src={MenuIcon} alt="Menu" />
       </button>
+      </div>
       <aside className={`sidebar-left ${isOpen ? "open" : ""}`}>
         <div className="sidebar-inner">
           <div id="logo">
