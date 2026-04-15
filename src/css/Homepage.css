@@ -1138,6 +1138,19 @@ body {
   background: #dc2626;
 }
 
+.Uni-Logo {
+  display: block;
+  margin: 0 auto 20px;
+  width: 100px;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+.brand-icon .Uni-Logo {
+  margin: auto;
+  width: 50px;
+}
+
 /* ===== ANIMATIONS ===== */
 @keyframes fadeIn {
   from {
