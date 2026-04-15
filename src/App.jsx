@@ -4,6 +4,7 @@ import Homepage from "./pages/Homepage";
 import Payment from "./pages/Payment";
 import ManageSubjects from "./pages/ManageSubjects";
 import Login from "./pages/login";
+import About from "./pages/about";
 
 export default function Routing() {
   const location = useLocation();
@@ -16,6 +17,7 @@ export default function Routing() {
         <Route path="/home" element={<Homepage />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/student-management" element={<ManageSubjects />} />
+        <Route path="/about" element={<About />} />
       </Routes>
     </>
   );
