@@ -151,3 +151,25 @@ body {
     width: 28px;
     height: 28px;
 }
+
+
+.toggle-wrapper {
+    display: flex;
+    margin-top: 16px; 
+}
+
+.toggle-text {
+    color: #555555;
+    font-size: 16px; 
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.toggle-text strong {
+    color: #fa6d06; 
+}
+
+.toggle-text:hover strong {
+    color: #e06205;
+    text-decoration: underline;
+}
