@@ -391,6 +391,7 @@ export default function ManageSubjects() {
           <ClassSchedule />
         </div>
       )}
+
       {/* Change Section modal  */}
       {isChangeModalOpen && subjectoEdit && (
         <div className="modalOverlay">
