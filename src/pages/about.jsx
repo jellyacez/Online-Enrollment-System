@@ -171,6 +171,68 @@ const AboutPage = () => {
           </section>
         </div>
       </div>
+      {/* --- SITE FOOTER --- */}
+      <footer className="site-footer">
+        <div className="footer-top">
+          {/* Brand Section */}
+          <div className="footer-brand">
+            <img src={universityLogo} className="footer-Logo"></img>
+            <p>
+              Education, Evolved. Empowering the next generation of global
+              leaders through continuous innovation and rigorous training.
+            </p>
+          </div>
+
+          {/* Quick Links Section */}
+          <div className="footer-links">
+            <h4>Quick Links</h4>
+            <ul>
+              <li>
+                <a href="#home">Home</a>
+              </li>
+              <li>
+                <a href="#about">About Us</a>
+              </li>
+              <li>
+                <a href="#admissions">Admissions</a>
+              </li>
+              <li>
+                <a href="#academics">Academics</a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Section */}
+          <div className="footer-contact">
+            <h4>Contact Us</h4>
+            <p>
+              <span>📍</span> 123 University Ave, Pampanga
+            </p>
+            <p>
+              <span>📞</span> (609) 791-3583
+            </p>
+            <p>
+              <span>✉️</span> admissions@acez.edu.ph
+            </p>
+
+            {/* Optional: Add a Student Portal quick-link button here too */}
+            <button
+              className="footer-portal-btn"
+              onClick={() => navigate("/login")}
+            >
+              Access Student Portal
+            </button>
+          </div>
+        </div>
+
+        {/* Copyright Banner */}
+        <div className="footer-bottom">
+          <p>
+            &copy; {new Date().getFullYear()} Acez University. All rights
+            reserved.
+          </p>
+        </div>
+      </footer>
     </>
   );
 };
