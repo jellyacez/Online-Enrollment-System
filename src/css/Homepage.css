@@ -32,9 +32,12 @@
   --radius: 12px;
   --radius-sm: 8px;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -44,7 +47,11 @@ html {
 }
 
 body {
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
   background: var(--orange-50);
   color: var(--gray-800);
   line-height: 1.6;
@@ -55,7 +62,7 @@ body {
 .app-container {
   display: flex;
   min-height: 100vh;
-  width: 100%; 
+  width: 100%;
 }
 
 /* ===== SIDEBAR ===== */
@@ -65,7 +72,11 @@ body {
   left: -300px;
   width: 280px;
   height: 100vh;
-  background: linear-gradient(180deg, var(--orange-800) 0%, var(--orange-900) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--orange-800) 0%,
+    var(--orange-900) 100%
+  );
   color: var(--white);
   z-index: 1000;
   transition: left 0.3s ease;
@@ -175,7 +186,7 @@ body {
 .main-content {
   flex: 1;
   min-height: 100vh;
-  width: 100%; 
+  width: 100%;
 }
 
 /* ===== TOP NAV ===== */
@@ -449,7 +460,12 @@ body {
 
 /* ===== WELCOME SECTION ===== */
 .welcome-section {
-  background: linear-gradient(135deg, var(--orange-500) 0%, var(--orange-600) 50%, var(--orange-700) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--orange-500) 0%,
+    var(--orange-600) 50%,
+    var(--orange-700) 100%
+  );
   color: var(--white);
   padding: 32px;
   display: flex;
@@ -594,7 +610,7 @@ body {
 }
 
 .glance-card h3 {
-  font-size: 1.15rem; 
+  font-size: 1.15rem;
   color: var(--orange-700);
   margin-bottom: 16px;
   font-weight: 700;
@@ -733,7 +749,11 @@ body {
 }
 
 .modal-wide {
-  max-width: 700px;
+  width: 95% !important;
+  max-width: 1200px !important;
+  height: auto;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal-sm {
@@ -1120,8 +1140,12 @@ body {
 
 /* ===== ANIMATIONS ===== */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modalIn {

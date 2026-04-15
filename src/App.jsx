@@ -10,12 +10,12 @@ export default function Routing() {
   const isLoginPage = location.pathname.toLowerCase().includes("login");
   return (
     <>
-      {!isLoginPage && <Navbar />}
+      {!isLoginPage}
       <Routes>
-        <Route path="/" element={<Homepage />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/home" element={<Homepage />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/student-management" element={<ManageSubjects />} />
-        <Route path="/login" element={<Login />} />
       </Routes>
     </>
   );
