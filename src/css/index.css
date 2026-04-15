@@ -2,89 +2,172 @@
   --text: #0e0b0a;
   --text-h: #08060d;
   --bg: #fefcfb;
-  --priamry:#fa6d06;
-  --secondary:#e2b198;
-  --accent:#e18354;
+  --priamry: #fa6d06;
+  --secondary: #e2b198;
+  --accent: #e18354;
   --border: #e5e4e7;
-  
 }
-#aaa{
-  margin-left:260px;
-    min-height: 100vh;
-    background-color: var(--bg);
-    padding:20px
+#aaa {
+  margin-left: 260px;
+  min-height: 100vh;
+  background-color: var(--bg);
+  padding: 20px;
 }
 /* ALl of this are Nav*/
-.sidebar-left{
-position: fixed;
-top:0;
-left:0;
-width:10;
-min-width: 10%;
-height:100vh;
-background: linear-gradient(45deg, var(--secondary) 0%, var(--accent) 100%);
-overflow-y:auto;
-box-shadow: 6px 0 20px rgba(0, 0, 0, 0.08);
-z-index: 100;
-}
-.sidebar-inner{
-padding:24px 16px;
-display:flex;
-flex-direction: column;
-height:100%;
-}
-#logo{
-  padding-bottom: 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 24px
-}
-#logo h2{
-  margin:0;
-  color: white;
-  font-size:1.7rem;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  text-align: center;
-}
-#links{
-  display:flex;
-  flex-direction: column;
-  gap:10px;
-  flex:1;
-  text-align: center;
-  
-}
-#links a{
-  color:var(--text);
-  font-weight: 500;
-  text-decoration: none;
-  gap:14px;
-}
-#links a:hover{
-  color:whitesmoke
+.sidebar-left {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 10;
+  min-width: 10%;
+  height: 100vh;
+  background: linear-gradient(45deg, var(--secondary) 0%, var(--accent) 100%);
+  overflow-y: auto;
+  box-shadow: 6px 0 20px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
-.link-container{
-  background-color: transparent;
-  padding:0 1rem;
+.sidebar-left.open {
+  transform: translateX(0);
 }
-.link-container a{
-    display: block;
+
+.MenuButton {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: none;
+  font-size: 24px;
+  border: none;
+  cursor: pointer;
+  z-index: 1001;
+  color: #0e0b0a;
+  transition:
+    opacity 0.2s ease-in-out,
+    visibility 0.2s ease-in-out;
+}
+
+.show-button {
+  opacity: 1;
+  visibility: visible;
+}
+
+.hide-button {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.MenuButton img {
+  height: 32px;
+  width: 32px;
+  object-fit: contain;
+}
+
+.close-button {
+  position: absolute;
+  background: none;
+  font-size: 24px;
+  border: none;
+  cursor: pointer;
+  color: #000000;
+  float: right;
+  margin-right: 15px;
+}
+.sidebar-inner {
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+#logo {
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 24px;
+}
+#logo h2 {
+  margin: 0;
+  color: white;
+  font-size: 1.7rem;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  text-align: center;
+}
+#links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  text-align: center;
+}
+#links a {
+  color: var(--text);
+  font-weight: 500;
+  text-decoration: none;
+  gap: 14px;
+}
+#links a:hover {
+  color: whitesmoke;
+}
+
+.link-container {
+  background-color: transparent;
+  padding: 0 1rem;
+}
+.link-container a {
+  display: block;
   padding: 10px 16px;
   color: #cbd5e1;
+  font-weight: 600;
   text-decoration: none;
   font-weight: 500;
-  border-radius: 12px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+
+  position: relative;
+  z-index: 2;
+  transition:
+    color 0.3s ease-in-out,
+    transform 0.2s ease-in-out;
 }
+
 .link-container:not(:first-of-type)::before {
   content: "";
   display: flex;
   border-top: 2px solid var(--border);
   margin-bottom: 8px;
 }
-.link-container a:hover{
-  background-color: var(--priamry);
-  color: whitesmoke;
 
+.link-container a:hover {
+  color: whitesmoke;
 }
 
+.link-container a.active-tab {
+  color: #fefcfb;
+  transform: scale(1.02);
+}
+
+.sliding-bar {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  background-color: #fa6d06;
+  border-radius: 8px;
+  z-index: 1;
+  box-shadow: 0 4px 6px rgba(250, 109, 6, 0.2);
+  transition:
+    top 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+    height 0.4s ease-in-out,
+    opacity 0.2s;
+}
 /* End of Nav*/
+
+@media (max-width: 768px) {
+  #aaa,
+  .portal-layout {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    padding: 16px;
+  }
+}
