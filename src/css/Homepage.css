@@ -1141,11 +1141,17 @@ body {
 .Uni-Logo {
   display: block;
   margin: 0 auto 20px;
-  width: 100px;
+  width: 200px;
   height: auto;
   max-width: 100%;
   object-fit: contain;
 }
+
+.sidebar-logo .Uni-Logo {
+  margin: auto;
+  width: 200px;
+}
+
 .brand-icon .Uni-Logo {
   margin: auto;
   width: 50px;

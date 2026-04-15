@@ -6,6 +6,7 @@ import ClassSchedule from "../components/ClassSchedule/ClassSchedule";
 import "../components/ClassSchedule/ClassSchedule.css";
 import "../css/ManageSubjects.css";
 import Logo from "../assets/UniLogo.png";
+import Logo2 from "../assets/UniLogo2.png";
 
 const SAMPLE_NOTIFICATIONS = [
   {
@@ -312,9 +313,8 @@ export default function Homepage() {
       <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <img src={Logo} className="Uni-Logo" alt="University Logo" />
+            <img src={Logo2} className="Uni-Logo" alt="University Logo" />
           </div>
-          <h2>Acez University</h2>
           <button
             className="sidebar-close"
             onClick={() => setSidebarOpen(false)}
