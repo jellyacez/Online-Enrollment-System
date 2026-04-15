@@ -8,10 +8,9 @@
   --border: #e5e4e7;
 }
 #aaa {
-  margin-left: 260px;
   min-height: 100vh;
   background-color: var(--bg);
-  padding: 20px;
+  padding: 0px;
 }
 /* ALl of this are Nav*/
 .sidebar-left {
@@ -33,6 +32,26 @@
 
 .sidebar-left.open {
   transform: translateX(0);
+}
+
+html, body, #root {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden;
+}
+
+#root > * {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+}
+
+#aaa {
+  margin-left: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
 }
 
 .MenuButton {

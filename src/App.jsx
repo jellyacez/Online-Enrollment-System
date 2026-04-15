@@ -10,7 +10,7 @@ export default function Routing() {
   const isLoginPage = location.pathname.toLowerCase().includes("login");
   return (
     <>
-      {!isLoginPage}
+      {!isLoginPage && <Navbar />}
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/payment" element={<Payment />} />
