@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ClassSchedule from "../components/ClassSchedule/ClassSchedule";
 import "../css/index.css";
 import "../css/ManageSubjects.css";
 export default function ManageSubjects() {
@@ -272,6 +273,12 @@ export default function ManageSubjects() {
         >
           Add New Subject
         </button>
+        <button
+          className={`tab-button ${ActiveView === "schedule" ? "active" : ""}`}
+          onClick={() => setActiveView("schedule")}
+        >
+          View Timetable
+        </button>
       </div>
 
       {ActiveView === "enrolled" && (
@@ -376,6 +383,12 @@ export default function ManageSubjects() {
               </tbody>
             </table>
           )}
+        </div>
+      )}
+
+      {ActiveView === "schedule" && (
+        <div className="table-container">
+          <ClassSchedule />
         </div>
       )}
       {/* Change Section modal  */}

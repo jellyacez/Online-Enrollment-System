@@ -1,6 +1,6 @@
-import { useState, useEffect, use } from "react";
-import "./ClassSchedule.css";
-import ".../css/ManageSubjects.css";
+import { useState, useEffect } from "react";
+import "../ClassSchedule/ClassSchedule.css";
+import "../../css/ManageSubjects.css";
 //function to parse schedule string into array of {col, startRow, endRow} objects
 const parseSchedule = (scheduleString) => {
   if (!scheduleString || scheduleString === "TBA") return [];
@@ -60,84 +60,86 @@ export default function ClassSchedule() {
       setMySubjects(JSON.parse(saved));
     }
   }, []);
+
+  const times = [
+    "7:00 AM",
+    "8:00 AM",
+    "9:00 AM",
+    "10:00 AM",
+    "11:00 AM",
+    "12:00 PM",
+    "1:00 PM",
+    "2:00 PM",
+    "3:00 PM",
+    "4:00 PM",
+    "5:00 PM",
+  ];
+
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+  const colors = ["#fa6d06", "#4caf50", "#2196f3", "#9c27b0", "#e91e63"];
+
+  return (
+    <div className="schedule-container">
+      <div className="header">
+        <div>
+          <h3 className="section-title">Class Schedule</h3>
+          <p className="section-subtitle">
+            Visual Timetable for your enrolled subjects.
+          </p>
+        </div>
+      </div>
+
+      <div className="timetable-container">
+        <div className="timetable-grid">
+          <div className="time-header">Time</div>
+          {days.map((day) => (
+            <div key={day} className="day-header">
+              {day}
+            </div>
+          ))}
+
+          {times.map((time, index) => (
+            <div
+              key={time}
+              className="timeLabel"
+              style={{ gridRow: `${index * 2 + 2} / span 2` }}
+            >
+              <span>{time}</span>
+            </div>
+          ))}
+
+          {times.map((_, timeIndex) => (
+            <div
+              key={`line-${index}`}
+              className="grid-line"
+              style={{ gridRow: `${index * 2 + 2}` }}
+            ></div>
+          ))}
+
+          {mySubjects.map((subject, index) => {
+            const blocks = parseSchedule(subject.schedule);
+            return blocks.map((block, blockIndex) => (
+              <div
+                key={`${subject.id}-${blockIndex}`}
+                className="class-block"
+                style={{
+                  gridColumn: block.col,
+                  gridRow: `${block.startRow} / ${block.endRow}`,
+                  backgroundColor: colors[index % colors.length],
+                }}
+              >
+                <strong>{subject.code}</strong>
+                <span className="block-room">{subject.section}</span>
+                <span className="block-time">
+                  {subject.schedule.split(" ")[1]}
+                </span>
+              </div>
+            ));
+          })}
+        </div>
+      </div>
+    </div>
+  );
 }
 // end of class schedule component
-
-const times = [
-  "7:00 AM",
-  "8:00 AM",
-  "9:00 AM",
-  "10:00 AM",
-  "11:00 AM",
-  "12:00 PM",
-  "1:00 PM",
-  "2:00 PM",
-  "3:00 PM",
-  "4:00 PM",
-  "5:00 PM",
-];
-
-const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
-const colors = ["#fa6d06", "#4caf50", "#2196f3", "#9c27b0", "#e91e63"];
-
-return (
-  <div className="schedule-container">
-    <div className="header">
-      <div>
-        <h3 className="section-title">Class Schedule</h3>
-        <p className="section-subtitle">
-          Visual Timetable for your enrolled subjects.
-        </p>
-      </div>
-    </div>
-
-    <div className="timetable-container">
-      <div className="timetable-grid">
-        <div className="time-header">Time</div>
-        {days.map((day) => (
-          <div key={day} className="day-header">
-            {day}
-          </div>
-        ))}
-
-        {times.map((time, index) => (
-          <div
-            key={time}
-            className="timeLabel"
-            style={{ gridRow: `${index * 2 + 2} / span 2` }}
-          >
-            <span>{time}</span>
-          </div>
-        ))}
-
-        {times.map((_, timeIndex) => (
-          <div
-            key={`line-${index}`}
-            className="grid-line"
-            style={{ gridRow: `${index * 2 + 2}` }}
-          ></div>
-        ))}
-
-        {mySubjects.map((subject, index) => {
-          const blocks = parseSchedule(subject.schedule);
-          return blocks.map((block, blockIndex) => (
-            <div
-              key={`${subject.id}-${blockIndex}`}
-              className="class-block"
-              style={{
-                gridColumn: block.col,
-                gridRow: `${block.startRow} / ${block.endRow}`,
-                backgroundColor: colors[index % colors.length],
-              }}
-            >
-              <strong>{subject.code}</strong>
-              <span className="block-room">{subject.section}</span>
-              <span className=""></span>
-            </div>
-          ));
-        })}
-      </div>
-    </div>
-  </div>
-);
