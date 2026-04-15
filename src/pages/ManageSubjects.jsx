@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import ClassSchedule from "../components/ClassSchedule/ClassSchedule";
 import "../css/index.css";
 import "../css/ManageSubjects.css";
 export default function ManageSubjects() {
@@ -243,7 +242,7 @@ export default function ManageSubjects() {
   };
 
   return (
-    <div id="aaa" className="manage-subjects-container">
+    <div className="manage-subjects-container">
       <div className="header">
         <div>
           <h3 className="section-title">Manage Subjects</h3>
@@ -272,12 +271,6 @@ export default function ManageSubjects() {
           onClick={() => setActiveView("add")}
         >
           Add New Subject
-        </button>
-        <button
-          className={`tab-button ${ActiveView === "schedule" ? "active" : ""}`}
-          onClick={() => setActiveView("schedule")}
-        >
-          View Timetable
         </button>
       </div>
 
@@ -383,12 +376,6 @@ export default function ManageSubjects() {
               </tbody>
             </table>
           )}
-        </div>
-      )}
-
-      {ActiveView === "schedule" && (
-        <div className="table-container">
-          <ClassSchedule />
         </div>
       )}
 
