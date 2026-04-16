@@ -237,7 +237,7 @@ const cancelModal = ()=>{
           )}
 
           <div className="payment-footer">
-            <Link to="/">← Cancel and return</Link>
+            <Link to="/home">← Cancel and return</Link>
             
           </div>
         </div>
