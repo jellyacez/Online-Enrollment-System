@@ -240,6 +240,7 @@ main {
 .confirm-btn:hover{
 background-color:#0ec256;
 transform:translateY(-2px);
+cursor:pointer;
 }
 
 /*End of Inputs*/
@@ -281,10 +282,13 @@ transform:translateY(-2px);
 .accept-pay:hover{
    background-color:green;
    color:white;
+   cursor:pointer;
 }
 .cancel-btn:hover{
   background-color: rgb(211, 47, 47);
-  color:black
+  color:black;
+  cursor:pointer;
+
 }
 
 
