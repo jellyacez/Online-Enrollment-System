@@ -1,7 +1,7 @@
 Install dependencies:
 
 ```bash
-npm i && npm i react-router-dom
+npm i && npm i react-router-dom && npm i swiper
 ```
 
 To start:
