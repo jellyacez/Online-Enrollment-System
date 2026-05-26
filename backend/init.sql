@@ -24,6 +24,16 @@ CREATE TABLE user_profiles (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE archived_users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    original_user_id INT,
+    full_name VARCHAR(255),
+    email VARCHAR(255),
+    role VARCHAR(50),
+    profile_data JSON,
+    archived_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE subjects (
     id INT AUTO_INCREMENT PRIMARY KEY,
     subject_code VARCHAR(50) NOT NULL UNIQUE,
