@@ -23,7 +23,7 @@ export default function Login() {
     }
   }, [location]);
 
-  const [studentType, setStudentType] = useState("regular");
+  const [studentType, setStudentType] = useState("old");
 
   const handleLogin = async (e) => {
     e.preventDefault();
