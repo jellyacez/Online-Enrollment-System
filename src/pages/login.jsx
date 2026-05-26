@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import Logo from "../assets/UniLogo.png";
 import "../css/login-signup.css";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLogin, setIsLogin] = useState(true);
   
   // Form States
@@ -12,8 +13,17 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [conpassword, setConpassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(location.state?.message || "");
   const [loading, setLoading] = useState(false);
+
+  // Clear URL state so message doesn't persist on reload
+  useEffect(() => {
+    if (location.state?.message) {
+      window.history.replaceState({}, document.title)
+    }
+  }, [location]);
+
+  const [studentType, setStudentType] = useState("regular");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -63,13 +73,21 @@ export default function Login() {
       return;
     }
 
+    if (studentType !== "old") {
+      // Redirect to extended signup with basic details
+      navigate("/signup-extended", {
+        state: { name, email, password, studentType }
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ full_name: name, email, password }),
+        body: JSON.stringify({ full_name: name, email, password, student_type: studentType }),
       });
 
       const data = await response.json();
@@ -157,6 +175,24 @@ export default function Login() {
                 onChange={(e) => setName(e.target.value)}
                 required
               />
+            </div>
+            <div className="info-group">
+              <label htmlFor="studentType">Student Type</label>
+              <select
+                id="studentType"
+                name="studentType"
+                value={studentType}
+                onChange={(e) => setStudentType(e.target.value)}
+                required
+                style={{
+                  width: "100%", padding: "10px", marginTop: "5px", marginBottom: "15px",
+                  border: "1px solid #ccc", borderRadius: "4px", fontSize: "14px"
+                }}
+              >
+                <option value="old">Old Student</option>
+                <option value="new">New Enrollee</option>
+                <option value="transferee">Transferee</option>
+              </select>
             </div>
             <div className="info-group">
               <label htmlFor="email">Email Address</label>

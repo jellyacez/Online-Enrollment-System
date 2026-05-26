@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import DashboardLayout, { DashboardContext } from "../components/DashboardLayout";
 import { SAMPLE_NOTIFICATIONS, SAMPLE_SCHEDULE, SAMPLE_BALANCE } from "../utils/dummyData";
 
@@ -56,13 +56,25 @@ function HomepageContent() {
   const program = "BS Information Technology";
   const yearLevel = "2nd Year";
 
+  const [enrollments, setEnrollments] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/enrollments")
+      .then(res => res.json())
+      .then(data => {
+        const myEnrolled = data.filter(e => 
+          (e.student_name === user.full_name || true) && e.status === 'enrolled'
+        );
+        setEnrollments(myEnrolled);
+      })
+      .catch(err => console.error("Failed to fetch enrollments", err));
+  }, [user.full_name]);
+
   const dashboardCards = [
-    { key: "profile", icon: "👤", label: "My Profile", color: "#FF6B00" },
     { key: "notifications", icon: "🔔", label: "Notifications", color: "#FF8C38", badge: SAMPLE_NOTIFICATIONS.filter((n) => n.unread).length },
     { key: "announcements", icon: "📢", label: "Announcements", color: "#E85D00" },
     { key: "grades", icon: "📊", label: "Grades", color: "#CC5500" },
     { key: "medical", icon: "🏥", label: "Medical", color: "#FF7A1A" },
-    { key: "calendar", icon: "📅", label: "Calendar", color: "#D46A00" },
     { key: "balance", icon: "💰", label: "Balance", color: "#B84D00" },
     { key: "enrollment", icon: "📝", label: "Enrollment Summary", color: "#FF9933" },
   ];
@@ -86,9 +98,55 @@ function HomepageContent() {
         </div>
       </section>
 
+      <section className="dashboard-widgets">
+        {/* --- PROFILE WIDGET --- */}
+        <div className="dash-widget" style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+          <div className="avatar-xl" style={{ width: "80px", height: "80px", fontSize: "1.8rem", margin: 0 }}>
+            {studentName.substring(0, 2).toUpperCase()}
+          </div>
+          <div style={{ flex: 1 }}>
+            <h3 style={{ marginBottom: "8px", color: "var(--gray-800)", fontSize: "1.4rem" }}>{studentName}</h3>
+            <p style={{ margin: 0, color: "var(--gray-600)" }}>{program} • {studentId}</p>
+          </div>
+          <button className="btn btn-primary" onClick={() => window.location.href = "/profile"} style={{ background: "var(--orange-500)", color: "white" }}>
+            View Profile
+          </button>
+        </div>
+
+        {/* --- CALENDAR/SCHEDULE WIDGET --- */}
+        <div className="dash-widget" style={{ display: "flex", gap: "20px" }}>
+          <div style={{ flex: 1 }}>
+            <h3 style={{ fontSize: "1.15rem", color: "var(--orange-700)", marginBottom: "16px", fontWeight: "700" }}>📅 Today's Schedule</h3>
+            {enrollments.length > 0 ? (
+              enrollments.map((s) => {
+                const dayMap = { 0: "Sun", 1: "Mon", 2: "Tue", 3: "Wed", 4: "Thu", 5: "Fri", 6: "Sat" };
+                const todayShort = dayMap[new Date().getDay()];
+                const isToday = s.schedule && s.schedule.includes(todayShort);
+                if (!isToday) return null;
+                return (
+                  <div key={s.id} className="glance-item">
+                    <strong>{s.subject_code}</strong> — {s.schedule} @ {s.section_name}
+                  </div>
+                );
+              })
+            ) : (
+              <p className="glance-empty" style={{ textAlign: "center", marginTop: "30px", color: "var(--gray-400)" }}>No classes today 🎉</p>
+            )}
+            {enrollments.length > 0 && !enrollments.some(s => {
+               const dayMap = { 0: "Sun", 1: "Mon", 2: "Tue", 3: "Wed", 4: "Thu", 5: "Fri", 6: "Sat" };
+               return s.schedule && s.schedule.includes(dayMap[new Date().getDay()]);
+            }) && <p className="glance-empty" style={{ textAlign: "center", marginTop: "30px", color: "var(--gray-400)" }}>No classes today 🎉</p>}
+          </div>
+          <div style={{ width: "220px", flexShrink: 0, borderLeft: "1px solid var(--gray-200)", paddingLeft: "20px" }}>
+            <CalendarWidgetMini />
+          </div>
+        </div>
+      </section>
+
       <section className="dashboard-grid" style={{ margin: "20px" }}>
+        {/* --- ICON CARDS --- */}
         {filteredCards.map((card) => (
-          <button key={card.key} className="dash-card" onClick={() => openModal(card.key)}>
+          <button key={card.key} className="dash-card" onClick={() => card.key === "profile" ? window.location.href = "/profile" : openModal(card.key)}>
             <div className="dash-card-icon" style={{ background: card.color }}>{card.icon}</div>
             <span className="dash-card-label">{card.label}</span>
             {card.badge && <span className="dash-card-badge">{card.badge}</span>}
@@ -106,33 +164,12 @@ function HomepageContent() {
 
       <section className="quick-glance" style={{ margin: "20px" }}>
         <div className="glance-card">
-          <h3>📅 Today&apos;s Schedule</h3>
-          {SAMPLE_SCHEDULE.filter((s) => {
-            const dayMap = { 0: "Sun", 1: "Mon", 2: "Tue", 3: "Wed", 4: "Thu", 5: "Fri", 6: "Sat" };
-            return s.day.includes(dayMap[new Date().getDay()]);
-          }).length > 0 ? (
-            SAMPLE_SCHEDULE.filter((s) => {
-              const dayMap = { 0: "Sun", 1: "Mon", 2: "Tue", 3: "Wed", 4: "Thu", 5: "Fri", 6: "Sat" };
-              return s.day.includes(dayMap[new Date().getDay()]);
-            }).map((s) => (
-              <div key={s.code} className="glance-item">
-                <strong>{s.code}</strong> — {s.time} @ {s.room}
-              </div>
-            ))
-          ) : (
-            <p className="glance-empty">No classes today 🎉</p>
-          )}
-        </div>
-        <div className="glance-card">
           <h3>💰 Balance Overview</h3>
           <div className="balance-bar-container">
             <div className="balance-bar" style={{ width: `${(SAMPLE_BALANCE.paid / SAMPLE_BALANCE.total) * 100}%` }} />
           </div>
           <p>₱{SAMPLE_BALANCE.paid.toLocaleString()} / ₱{SAMPLE_BALANCE.total.toLocaleString()} paid</p>
           <small>Due: {SAMPLE_BALANCE.due}</small>
-        </div>
-        <div className="glance-card">
-          <CalendarWidgetMini />
         </div>
       </section>
     </>

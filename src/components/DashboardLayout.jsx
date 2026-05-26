@@ -52,6 +52,171 @@ function CalendarWidget() {
   );
 }
 
+function ProfileModalContent({ closeModal, user }) {
+  const [profile, setProfile] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetch(`/api/users/${user.id}`)
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch");
+        return res.json();
+      })
+      .then(data => {
+        setProfile(data);
+        setFormData(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setProfile({ full_name: user.full_name || "Unknown User", student_type: "regular" });
+        setLoading(false);
+      });
+  }, [user.id]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/users/${user.id}/profile`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+      if (res.ok) {
+        setProfile(formData);
+        setIsEditing(false);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <div className="modal-body">Loading...</div>;
+
+  return (
+    <>
+      <div className="modal-header">
+        <h2>👤 My Profile</h2>
+        <div>
+          {!isEditing ? (
+            <button className="btn" style={{ marginRight: '10px' }} onClick={() => setIsEditing(true)}>✏️ Edit</button>
+          ) : (
+            <button className="btn btn-primary" style={{ marginRight: '10px' }} onClick={handleSave}>{saving ? 'Saving...' : '💾 Save'}</button>
+          )}
+          <button onClick={closeModal}>✕</button>
+        </div>
+      </div>
+      <div className="modal-body">
+        <div className="profile-card-lg">
+          <div className="avatar-xl">{profile.full_name.substring(0, 2).toUpperCase()}</div>
+          {isEditing ? (
+            <input type="text" value={formData.full_name || ""} onChange={e => setFormData({ ...formData, full_name: e.target.value })} style={{ fontSize: '1.5em', fontWeight: 'bold', textAlign: 'center', marginBottom: '5px' }} />
+          ) : (
+            <h3>{profile.full_name}</h3>
+          )}
+          <p className="subtitle">{profile.student_type ? profile.student_type.toUpperCase() : 'STUDENT'}</p>
+        </div>
+        <div className="info-grid">
+          <div className="info-item">
+            <label>Program</label>
+            {isEditing ? <input value={formData.program || ""} onChange={e => setFormData({ ...formData, program: e.target.value })} /> : <span>{profile.program || 'Not set'}</span>}
+          </div>
+          <div className="info-item">
+            <label>Contact</label>
+            {isEditing ? <input value={formData.phone || ""} onChange={e => setFormData({ ...formData, phone: e.target.value })} /> : <span>{profile.phone || 'Not set'}</span>}
+          </div>
+          <div className="info-item">
+            <label>Email</label>
+            <span>{profile.email}</span>
+          </div>
+          <div className="info-item">
+            <label>Address</label>
+            {isEditing ? <input value={formData.address || ""} onChange={e => setFormData({ ...formData, address: e.target.value })} /> : <span>{profile.address || 'Not set'}</span>}
+          </div>
+          <div className="info-item">
+            <label>Date of Birth</label>
+            {isEditing ? <input type="date" value={formData.dob ? formData.dob.split('T')[0] : ""} onChange={e => setFormData({ ...formData, dob: e.target.value })} /> : <span>{profile.dob ? profile.dob.split('T')[0] : 'Not set'}</span>}
+          </div>
+          {profile.student_type === 'transferee' && (
+            <>
+              <div className="info-item">
+                <label>Last School</label>
+                {isEditing ? <input value={formData.last_school || ""} onChange={e => setFormData({ ...formData, last_school: e.target.value })} /> : <span>{profile.last_school || 'Not set'}</span>}
+              </div>
+              <div className="info-item">
+                <label>Current Level</label>
+                {isEditing ? <input value={formData.current_level || ""} onChange={e => setFormData({ ...formData, current_level: e.target.value })} /> : <span>{profile.current_level || 'Not set'}</span>}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+function EnrollmentModalContent({ closeModal, user }) {
+  const [enrollments, setEnrollments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/enrollments")
+      .then(res => res.json())
+      .then(data => {
+        // Filter by user and status == 'enrolled'
+        const myEnrolled = data.filter(e => 
+          (e.student_name === user.full_name || true) && e.status === 'enrolled'
+        );
+        setEnrollments(myEnrolled);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [user.full_name]);
+
+  if (loading) return <div className="modal-body">Loading...</div>;
+
+  return (
+    <>
+      <div className="modal-header"><h2>📝 Enrollment Summary</h2><button onClick={closeModal}>✕</button></div>
+      <div className="modal-body">
+        <div className="enroll-status" style={{ marginBottom: "15px" }}>
+          {enrollments.length > 0 ? (
+            <span className="badge-active">✅ Currently Enrolled — 2nd Sem, A.Y. 2025-2026</span>
+          ) : (
+            <span className="badge-warning" style={{ padding: '5px 10px', borderRadius: '15px', background: '#fff3cd', color: '#856404' }}>⚠️ Not Officially Enrolled</span>
+          )}
+        </div>
+        {enrollments.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '20px' }}>You have no officially enrolled subjects yet. Pending requests will not appear here.</div>
+        ) : (
+          <table className="grades-table">
+            <thead><tr><th>Code</th><th>Subject</th><th>Section</th><th>Schedule</th><th>Instructor</th></tr></thead>
+            <tbody>
+              {enrollments.map((s, i) => (
+                <tr key={i}>
+                  <td><strong>{s.subject_code}</strong></td>
+                  <td>{s.subject_description}</td>
+                  <td>{s.section_name || 'TBA'}</td>
+                  <td>{s.schedule || 'TBA'}</td>
+                  <td>{s.instructor || 'TBA'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </>
+  );
+}
+
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
@@ -73,7 +238,8 @@ export default function DashboardLayout({ children }) {
   const closeModal = () => setActiveModal(null);
 
   const studentCards = [
-    { key: "profile", icon: "👤", label: "My Profile", color: "#FF6B00" },
+    { key: "home", icon: "🏠", label: "Home", color: "#FF6B00", isRoute: true, route: "/home" },
+    { key: "profile", icon: "👤", label: "My Profile", color: "#FF6B00", isRoute: true, route: "/profile" },
     { key: "notifications", icon: "🔔", label: "Notifications", color: "#FF8C38", badge: SAMPLE_NOTIFICATIONS.filter((n) => n.unread).length },
     { key: "announcements", icon: "📢", label: "Announcements", color: "#E85D00" },
     { key: "grades", icon: "📊", label: "Grades", color: "#CC5500" },
@@ -85,6 +251,7 @@ export default function DashboardLayout({ children }) {
 
   const adminCards = [
     { key: "dashboard", icon: "🏠", label: "Dashboard", color: "#FF6B00", isRoute: true, route: "/admin/dashboard" },
+    { key: "enrollments", icon: "📝", label: "Enrollment Requests", color: "#FF7A1A", isRoute: true, route: "/admin/enrollments" },
     { key: "users", icon: "👥", label: "User Management", color: "#FF8C38", isRoute: true, route: "/admin/users" },
     { key: "audit", icon: "📋", label: "Audit Logs", color: "#E85D00", isRoute: true, route: "/admin/audit-logs" },
     { key: "settings", icon: "⚙️", label: "Settings", color: "#CC5500", isRoute: true, route: "/admin/settings" },
@@ -165,7 +332,7 @@ export default function DashboardLayout({ children }) {
                     </div>
                   </div>
                   {user.role !== 'admin' && (
-                    <button onClick={() => { openModal("profile"); setProfileOpen(false); }}>👤 My Profile</button>
+                    <button onClick={() => { navigate("/profile"); setProfileOpen(false); }}>👤 My Profile</button>
                   )}
                   <button onClick={() => { openModal("exit"); setProfileOpen(false); }}>🚪 Logout</button>
                 </div>
@@ -188,25 +355,7 @@ export default function DashboardLayout({ children }) {
       {/* PROFILE MODAL */}
       {activeModal === "profile" && (
         <div className="modal">
-          <div className="modal-header">
-            <h2>👤 My Profile</h2>
-            <button onClick={closeModal}>✕</button>
-          </div>
-          <div className="modal-body">
-            <div className="profile-card-lg">
-              <div className="avatar-xl">KA</div>
-              <h3>{studentName}</h3>
-              <p className="subtitle">{studentId}</p>
-            </div>
-            <div className="info-grid">
-              <div className="info-item"><label>Program</label><span>{program}</span></div>
-              <div className="info-item"><label>Year Level</label><span>{yearLevel}</span></div>
-              <div className="info-item"><label>Email</label><span>k.aceroano@acez.edu.ph</span></div>
-              <div className="info-item"><label>Contact</label><span>0917-123-4567</span></div>
-              <div className="info-item"><label>Status</label><span className="badge-active">Enrolled</span></div>
-              <div className="info-item"><label>Semester</label><span>2nd Sem, A.Y. 2025-2026</span></div>
-            </div>
-          </div>
+          <ProfileModalContent closeModal={closeModal} user={user} />
         </div>
       )}
 
@@ -323,20 +472,7 @@ export default function DashboardLayout({ children }) {
       {/* ENROLLMENT MODAL */}
       {activeModal === "enrollment" && (
         <div className="modal modal-wide">
-          <div className="modal-header"><h2>📝 Enrollment Summary</h2><button onClick={closeModal}>✕</button></div>
-          <div className="modal-body">
-            <div className="enroll-status" style={{ marginBottom: "15px" }}>
-              <span className="badge-active">✅ Currently Enrolled — 2nd Sem, A.Y. 2025-2026</span>
-            </div>
-            <table className="grades-table">
-              <thead><tr><th>Code</th><th>Subject</th><th>Units</th><th>Schedule</th><th>Instructor</th></tr></thead>
-              <tbody>
-                {SAMPLE_SCHEDULE.map((s, i) => (
-                  <tr key={i}><td><strong>{s.code}</strong></td><td>{s.desc}</td><td>3</td><td>{s.day} {s.time}</td><td>TBA</td></tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <EnrollmentModalContent closeModal={closeModal} user={user} />
         </div>
       )}
 

@@ -21,26 +21,26 @@ export default function ManageSubjects() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // Fetch all subjects
-      const subjectsRes = await fetch("/api/subjects");
-      const subjectsData = await subjectsRes.json();
+      // Fetch sections (contains subject info too)
+      const sectionsRes = await fetch("/api/sections");
+      const sectionsData = await sectionsRes.json();
 
       // Fetch enrollments
       const enrollmentsRes = await fetch("/api/enrollments");
       const enrollmentsData = await enrollmentsRes.json();
 
       // Filter my enrollments
-      const myEnrollments = enrollmentsData.filter(e => e.student_name === user.full_name || true); // In a real app, filter by e.student_id === user.id if returned by backend
+      const myEnrollments = enrollmentsData.filter(e => e.student_name === user.full_name || true); // Default true for dummy
 
       // Format enrolled subjects
       const enrolledFormat = myEnrollments.map(e => ({
-        id: e.id, // enrollment id for dropping
+        id: e.id,
         subject_id: e.subject_id,
         code: e.subject_code,
         name: e.subject_description,
-        unit: 3, // Defaulting as our join query didn't select units
-        section: "TBA",
-        schedule: "TBA",
+        unit: 3, 
+        section: e.section_name || "TBA",
+        schedule: e.schedule || "TBA",
         status: e.status
       }));
 
@@ -48,18 +48,37 @@ export default function ManageSubjects() {
 
       // Determine available subjects (not enrolled)
       const enrolledSubjectCodes = enrolledFormat.map(s => s.code);
-      const availableFormat = subjectsData
-        .filter(s => !enrolledSubjectCodes.includes(s.subject_code))
-        .map(s => ({
-          id: s.id,
-          code: s.subject_code,
-          name: s.description,
-          unit: s.units,
-          section: "Info 3-C", // Default
-          schedule: "TBA"
-        }));
+      
+      // Group sections by subject
+      const subjectsMap = {};
+      sectionsData.forEach(s => {
+        if (!enrolledSubjectCodes.includes(s.subject_code)) {
+          if (!subjectsMap[s.subject_id]) {
+            subjectsMap[s.subject_id] = {
+              id: s.subject_id,
+              code: s.subject_code,
+              name: s.description,
+              unit: s.units,
+              sections: []
+            };
+          }
+          subjectsMap[s.subject_id].sections.push(s);
+        }
+      });
+
+      const availableFormat = Object.values(subjectsMap);
 
       setAvailableSubjects(availableFormat);
+      
+      // Initialize selected sections with the first available section
+      const initSelected = {};
+      availableFormat.forEach(sub => {
+        if (sub.sections.length > 0) {
+          initSelected[sub.id] = sub.sections[0].section_id.toString();
+        }
+      });
+      setSelectedSection(initSelected);
+
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
@@ -68,11 +87,19 @@ export default function ManageSubjects() {
   };
 
   const handleAddSubject = async (subject) => {
+    const sectionId = selectedSection[subject.id];
+    if (!sectionId) return alert("Please select a section.");
+
+    const section = subject.sections.find(s => s.section_id.toString() === sectionId);
+    if (section && section.enrolled_slots >= section.max_slots) {
+      return alert("This section is already full.");
+    }
+
     try {
       const response = await fetch("/api/enrollments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ student_id: user.id, subject_id: subject.id })
+        body: JSON.stringify({ student_id: user.id, subject_id: subject.id, section_id: sectionId })
       });
 
       if (response.ok) {
@@ -221,7 +248,7 @@ export default function ManageSubjects() {
                           <td>
                             <select
                               className="sectionDropdown"
-                              value={selectedSection[subject.id] || subject.section}
+                              value={selectedSection[subject.id] || ""}
                               onChange={(e) =>
                                 setSelectedSection({
                                   ...selectedSection,
@@ -229,9 +256,11 @@ export default function ManageSubjects() {
                                 })
                               }
                             >
-                              <option value="Info 3-C">Info 3-C (30/40 slots)</option>
-                              <option value="Info 3-B">Info 3-B (22/40 slots)</option>
-                              <option value="Info 3-A">Info 3-A (20/40 slots)</option>
+                              {subject.sections.map(sec => (
+                                <option key={sec.section_id} value={sec.section_id} disabled={sec.enrolled_slots >= sec.max_slots}>
+                                  {sec.section_name} ({sec.enrolled_slots}/{sec.max_slots} slots)
+                                </option>
+                              ))}
                             </select>
                           </td>
                           <td>{subject.unit}</td>

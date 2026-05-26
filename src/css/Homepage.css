@@ -540,6 +540,28 @@ body {
   transform: translateY(-1px);
 }
 
+.dash-widget {
+  background: var(--white);
+  border: 2px solid var(--orange-100);
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  box-shadow: var(--shadow);
+  position: relative;
+}
+
+.dashboard-widgets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 20px;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-widgets {
+    grid-template-columns: 1fr;
+  }
+}
+
 .dash-card-icon {
   width: 72px;
   height: 72px;

@@ -5,12 +5,14 @@ const logAction = require('../utils/auditLogger');
 exports.getEnrollments = async (req, res) => {
     try {
         const query = `
-            SELECT e.id, e.status, e.created_at,
+            SELECT e.id, e.status, e.created_at, e.subject_id, e.section_id,
                    u.full_name AS student_name, u.email AS student_email,
-                   s.subject_code, s.description AS subject_description
+                   s.subject_code, s.description AS subject_description,
+                   sec.name AS section_name, sec.schedule, sec.instructor
             FROM enrollments e
             JOIN users u ON e.student_id = u.id
             JOIN subjects s ON e.subject_id = s.id
+            JOIN sections sec ON e.section_id = sec.id
         `;
         const [rows] = await pool.query(query);
         res.json(rows);
@@ -23,18 +25,18 @@ exports.getEnrollments = async (req, res) => {
 // Create a new enrollment
 exports.createEnrollment = async (req, res) => {
     try {
-        const { student_id, subject_id } = req.body;
+        const { student_id, subject_id, section_id } = req.body;
         
-        if (!student_id || !subject_id) {
-            return res.status(400).json({ message: 'Student ID and Subject ID are required' });
+        if (!student_id || !subject_id || !section_id) {
+            return res.status(400).json({ message: 'Student ID, Subject ID, and Section ID are required' });
         }
 
         const [result] = await pool.query(
-            'INSERT INTO enrollments (student_id, subject_id, status) VALUES (?, ?, ?)',
-            [student_id, subject_id, 'pending']
+            'INSERT INTO enrollments (student_id, subject_id, section_id, status) VALUES (?, ?, ?, ?)',
+            [student_id, subject_id, section_id, 'pending']
         );
         
-        await logAction(student_id, 'ENROLL_SUBJECT', `Enrolled in subject ID ${subject_id}`);
+        await logAction(student_id, 'ENROLL_SUBJECT', `Enrolled in subject ID ${subject_id} section ID ${section_id}`);
 
         res.status(201).json({ 
             message: 'Enrollment created successfully', 
@@ -50,6 +52,20 @@ exports.createEnrollment = async (req, res) => {
 exports.updateEnrollmentStatus = async (req, res) => {
     try {
         const { status } = req.body;
+        
+        // If accepting, check section limits and increment
+        if (status === 'enrolled') {
+            const [[enrollment]] = await pool.query('SELECT section_id FROM enrollments WHERE id = ?', [req.params.id]);
+            if (!enrollment) return res.status(404).json({ message: 'Enrollment not found' });
+
+            const [[section]] = await pool.query('SELECT max_slots, enrolled_slots FROM sections WHERE id = ?', [enrollment.section_id]);
+            if (section.enrolled_slots >= section.max_slots) {
+                return res.status(400).json({ message: 'Section is full. Cannot approve.' });
+            }
+
+            await pool.query('UPDATE sections SET enrolled_slots = enrolled_slots + 1 WHERE id = ?', [enrollment.section_id]);
+        }
+
         const [result] = await pool.query(
             'UPDATE enrollments SET status = ? WHERE id = ?',
             [status, req.params.id]
