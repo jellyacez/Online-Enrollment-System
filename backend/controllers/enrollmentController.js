@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const logAction = require('../utils/auditLogger');
 
 // Get all enrollments with student and subject details
 exports.getEnrollments = async (req, res) => {
@@ -33,6 +34,8 @@ exports.createEnrollment = async (req, res) => {
             [student_id, subject_id, 'pending']
         );
         
+        await logAction(student_id, 'ENROLL_SUBJECT', `Enrolled in subject ID ${subject_id}`);
+
         res.status(201).json({ 
             message: 'Enrollment created successfully', 
             enrollmentId: result.insertId 
@@ -72,6 +75,8 @@ exports.deleteEnrollment = async (req, res) => {
             return res.status(404).json({ message: 'Enrollment not found' });
         }
         
+        await logAction(null, 'DROP_SUBJECT', `Dropped enrollment ID ${req.params.id}`); // Ideally get user id from req.user if auth middleware was present
+
         res.json({ message: 'Enrollment deleted successfully' });
     } catch (error) {
         console.error('Error deleting enrollment:', error);

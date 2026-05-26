@@ -1,6 +1,7 @@
 const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const logAction = require('../utils/auditLogger');
 
 // Register a new user
 exports.register = async (req, res) => {
@@ -10,6 +11,10 @@ exports.register = async (req, res) => {
         // Basic validation
         if (!full_name || !email || !password) {
             return res.status(400).json({ message: 'Please provide all required fields' });
+        }
+
+        if (password.length < 8) {
+            return res.status(400).json({ message: 'Password must be at least 8 characters long' });
         }
 
         // Check if user already exists
@@ -28,6 +33,8 @@ exports.register = async (req, res) => {
             'INSERT INTO users (full_name, email, password, role) VALUES (?, ?, ?, ?)',
             [full_name, email, hashedPassword, userRole]
         );
+
+        await logAction(result.insertId, 'REGISTER', `User ${email} registered as ${userRole}`);
 
         res.status(201).json({ message: 'User registered successfully', userId: result.insertId });
     } catch (error) {
@@ -72,8 +79,11 @@ exports.login = async (req, res) => {
             payload,
             process.env.JWT_SECRET || 'fallback_secret',
             { expiresIn: '1h' },
-            (err, token) => {
+            async (err, token) => {
                 if (err) throw err;
+                
+                await logAction(user.id, 'LOGIN', `User ${email} logged in`);
+
                 res.json({
                     token,
                     user: {

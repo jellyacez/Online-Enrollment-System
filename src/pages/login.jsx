@@ -6,23 +6,92 @@ import "../css/login-signup.css";
 export default function Login() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
+  
+  // Form States
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [conpassword, setConpassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    navigate("/home");
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      // Store token and user data
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      if (data.user.role === 'admin') {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/home");
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
-    setIsLogin(true);
+    setError("");
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
+    }
+
+    if (password !== conpassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ full_name: name, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Registration failed");
+      }
+
+      // Automatically switch to login mode after successful registration
+      setIsLogin(true);
+      setError("Registration successful! Please login.");
+      setPassword("");
+      setConpassword("");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoogleLogin = () => {
     console.log("Google Auth Triggered");
-  };
-
-  const handleFacebookLogin = () => {
-    console.log("Facebook Auth Triggered");
   };
 
   return (
@@ -34,6 +103,12 @@ export default function Login() {
         <img src={Logo} className="Uni-Logo" alt="University Logo" />
         <h2>{isLogin ? "Welcome Back" : "Create an Account"}</h2>
 
+        {error && (
+          <div style={{ color: error.includes("successful") ? "green" : "red", marginBottom: "10px", textAlign: "center" }}>
+            {error}
+          </div>
+        )}
+
         {isLogin ? (
           <form onSubmit={handleLogin}>
             <div className="info-group">
@@ -43,6 +118,8 @@ export default function Login() {
                 id="email"
                 name="email"
                 placeholder="name@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -53,11 +130,13 @@ export default function Login() {
                 id="password"
                 name="password"
                 placeholder="********"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
-            <button type="submit" className="submit-btn">
-              Login
+            <button type="submit" className="submit-btn" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
             </button>
             <div className="toggle-wrapper">
               <span className="toggle-text" onClick={() => setIsLogin(false)}>
@@ -74,6 +153,8 @@ export default function Login() {
                 id="name"
                 name="name"
                 placeholder="Your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
               />
             </div>
@@ -84,6 +165,8 @@ export default function Login() {
                 id="email"
                 name="email"
                 placeholder="name@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -94,6 +177,8 @@ export default function Login() {
                 id="password"
                 name="password"
                 placeholder="Create a password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
@@ -104,11 +189,13 @@ export default function Login() {
                 id="conpassword"
                 name="conpassword"
                 placeholder="Confirm password"
+                value={conpassword}
+                onChange={(e) => setConpassword(e.target.value)}
                 required
               />
             </div>
-            <button type="submit" className="submit-btn">
-              Sign Up
+            <button type="submit" className="submit-btn" disabled={loading}>
+              {loading ? "Signing up..." : "Sign Up"}
             </button>
             <div className="toggle-wrapper">
               <span className="toggle-text" onClick={() => setIsLogin(true)}>
@@ -148,23 +235,8 @@ export default function Login() {
             </svg>
             Continue with Google
           </button>
-         
         </div>
       </div>
     </div>
   );
 }
-//  <button
-//             type="button"
-//             className="social-btn facebook-btn"
-//             onClick={handleFacebookLogin}
-//           >
-//             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-//               <path
-//                 d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
-//                 fill="#ffffff"
-//               />
-//             </svg>
-//             Continue with Facebook
-//           </button>
-// Baka mag tampo si kevin, inalis yung facebook nya ·. °՞(ᗒ□ᗕ)՞°·. · 

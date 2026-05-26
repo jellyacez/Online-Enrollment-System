@@ -13,6 +13,8 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/subjects', require('./routes/subjectRoutes'));
 app.use('/api/enrollments', require('./routes/enrollmentRoutes'));
+app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/audit', require('./routes/auditRoutes'));
 
 app.get('/', (req, res) => {
     res.send('Online Enrollment System API is running');
