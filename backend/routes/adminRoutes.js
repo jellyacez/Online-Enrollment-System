@@ -97,6 +97,7 @@ router.get('/users', async (req, res) => {
 // @desc    Create a new user
 router.post('/users', async (req, res) => {
     const { full_name, email, password, role } = req.body;
+    
     try {
         const bcrypt = require('bcryptjs');
         const salt = await bcrypt.genSalt(10);

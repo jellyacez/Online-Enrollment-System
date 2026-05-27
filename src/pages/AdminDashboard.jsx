@@ -4,7 +4,7 @@ import "../css/index.css";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ totalStudents: 0, totalSubjects: 0, totalEnrollments: 0 });
-
+  
   useEffect(() => {
     const fetchStats = async () => {
       try {
