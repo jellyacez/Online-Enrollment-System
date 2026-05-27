@@ -91,7 +91,7 @@ INSERT INTO sections (subject_id, name, schedule, max_slots, enrolled_slots) VAL
 (1, 'Info 3-C', 'Mon/Wed 8:00 AM - 9:30 AM', 40, 0),
 (1, 'Info 3-B', 'Tue/Thu 10:00 AM - 11:30 AM', 30, 0),
 (2, 'Info 3-C', 'Mon/Wed 1:00 PM - 2:30 PM', 40, 0),
-(2, 'Info 3-A', 'Fri 8:00 AM - 11:00 AM', 20, 20), -- Fully booked section for testing
+(2, 'Info 3-A', 'Fri 8:00 AM - 11:00 AM', 20, 20), 
 (3, 'Info 3-C', 'Tue/Thu 8:00 AM - 9:30 AM', 40, 0),
 (4, 'Info 3-C', 'Mon/Wed 10:00 AM - 11:30 AM', 40, 0),
 (5, 'Info 3-C', 'Tue/Thu 1:00 PM - 2:30 PM', 40, 0);

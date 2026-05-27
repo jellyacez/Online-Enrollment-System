@@ -49,7 +49,13 @@ export default function SignupExtended() {
         }),
       });
 
-      const data = await response.json();
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (parseErr) {
+        throw new Error(response.ok ? "Invalid server response." : `Server is unreachable (Status: ${response.status}). Is the backend running?`);
+      }
 
       if (!response.ok) {
         throw new Error(data.message || "Registration failed");
