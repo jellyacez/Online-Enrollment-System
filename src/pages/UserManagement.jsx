@@ -7,7 +7,10 @@ export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [archivedUsers, setArchivedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  //nilagay koto tehee -D
+  const [searchTerm, setSearchTerm] = useState("");
+  const [totalPages, setTotalPages] = useState(1);
+  const LIMIT = 10;
   // Modal states
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -18,17 +21,27 @@ export default function UserManagement() {
     fetchArchivedUsers();
   }, []);
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (search = "",page = 1) => {
+    setLoading(true);
     try {
-      const res = await fetch("/api/admin/users");
+      // const res = await fetch("/api/admin/users");
+      const res = await fetch(`/api/admin/users?search=${encodeURIComponent(search)}&page=${page}&limit=${LIMIT}`) //incase
       const data = await res.json();
       setUsers(data);
+      setTotalPages(Math.ceil(data.total / LIMIT));//case
     } catch (err) {
       console.error("Error fetching users:", err);
     } finally {
       setLoading(false);
     }
   };
+
+
+const handleSearchChange = (e)=>{
+  const value = e.target.value;
+  setSearchTerm(value);
+  fetchUsers(value);
+}
 
   const fetchArchivedUsers = async () => {
     try {
@@ -103,6 +116,9 @@ export default function UserManagement() {
             <h1>User Management</h1>
             <p>Manage active students and view archived accounts.</p>
           </div>
+    //seawrch
+          <input type="text" placeholder="Search by name or email..." value={searchTerm} onChange={handleSearchChange} style={{ padding: "10px", width: "300px", borderRadius: "8px", border: "1px solid #ccc" }}
+  />
           <button 
             onClick={openCreateModal}
             style={{ padding: "10px 20px", background: "var(--orange-500)", color: "white", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "bold" }}
@@ -183,6 +199,31 @@ export default function UserManagement() {
                 </tr>
               ))}
             </tbody>
+            <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "20px" }}>
+  <button 
+    disabled={currentPage === 1}
+    onClick={() => {
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+      fetchUsers(searchTerm, newPage);
+    }}
+  >
+    Previous
+  </button>
+  
+  <span>Page {currentPage} of {totalPages}</span>
+  
+  <button 
+    disabled={currentPage === totalPages}
+    onClick={() => {
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+      fetchUsers(searchTerm, newPage);
+    }}
+  >
+    Next
+  </button>
+</div>
           </table>
         )}
 
