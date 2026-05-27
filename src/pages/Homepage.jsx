@@ -1,6 +1,6 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import DashboardLayout, { DashboardContext } from "../components/DashboardLayout";
-import { SAMPLE_NOTIFICATIONS, SAMPLE_SCHEDULE, SAMPLE_BALANCE } from "../utils/dummyData";
+import { SAMPLE_BALANCE, SAMPLE_NOTIFICATIONS } from "../utils/dummyData";
 
 // Simplified version of the calendar for the quick glance
 function CalendarWidgetMini() {
@@ -29,7 +29,7 @@ function CalendarWidgetMini() {
       </div>
       <div className="cal-days-label">
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
-          <span key={d} className="cal-label" key={d}>
+          <span key={d} className="cal-label" >
             {d}
           </span>
         ))}
