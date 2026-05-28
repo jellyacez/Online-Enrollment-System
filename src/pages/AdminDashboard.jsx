@@ -12,39 +12,47 @@ import {
   ScrollText,
   Plus,
   FileText,
-  PieChart as PieChartIcon
+  PieChart as PieChartIcon,
 } from "lucide-react";
 import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  Cell
-} from "recharts";
-import { Chart as ChartJS, ArcElement, Tooltip as ChartTooltip, Legend as ChartLegend } from 'chart.js';
-import { Doughnut } from 'react-chartjs-2';
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip as ChartTooltip,
+  Legend as ChartLegend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+} from "chart.js";
+import { Doughnut, Line } from "react-chartjs-2";
 import "../css/admindashboard.css";
 
-ChartJS.register(ArcElement, ChartTooltip, ChartLegend);
+ChartJS.register(
+  ArcElement,
+  ChartTooltip,
+  ChartLegend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+);
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+
   // Helper to generate the last 7 days chronologically
   const getLast7Days = () => {
     const days = [];
     for (let i = 6; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        days.push({
-            name: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }), // e.g. "May 28"
-            fullDate: d.toDateString(), // for easy matching
-            enrollments: 0
-        });
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      days.push({
+        name: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }), // e.g. "May 28"
+        fullDate: d.toDateString(), // for easy matching
+        enrollments: 0,
+      });
     }
     return days;
   };
@@ -58,9 +66,10 @@ export default function AdminDashboard() {
     activeUsers: 0,
     auditLogs: 0,
     recentEnrollees: [],
+    recentActivities: [],
+    programDistribution: [],
     // Default empty chart structure using chronological 7 days
     enrollmentTrends: getLast7Days(),
-    programDistribution: []
   });
 
   useEffect(() => {
@@ -99,8 +108,12 @@ export default function AdminDashboard() {
             // Dynamically calculate Chart Data chronologically for the last 7 days
             enrollData.forEach((enrollment) => {
               if (enrollment.created_at) {
-                const enrollDate = new Date(enrollment.created_at).toDateString();
-                const trendDay = calculatedTrends.find(t => t.fullDate === enrollDate);
+                const enrollDate = new Date(
+                  enrollment.created_at,
+                ).toDateString();
+                const trendDay = calculatedTrends.find(
+                  (t) => t.fullDate === enrollDate,
+                );
                 if (trendDay) {
                   trendDay.enrollments += 1;
                 }
@@ -111,25 +124,13 @@ export default function AdminDashboard() {
           console.error("Could not fetch real enrollments", e);
         }
 
-        // 3. Fetch Real Audit Logs (count AND recent)
+        // 3. Fetch Real Audit Logs count
         let realAuditLogs = 0;
-        let recentActivity = [];
         try {
-          const auditRes = await fetch("/api/audit");
+          const auditRes = await fetch("/api/audit-logs/count");
           if (auditRes.ok) {
             const auditData = await auditRes.json();
-            realAuditLogs = auditData.length || 0;
-            
-            // Get the 5 most recent audit logs
-            recentActivity = [...auditData]
-              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-              .slice(0, 5)
-              .map(log => ({
-                  id: log.id,
-                  action: log.action,
-                  user: log.user_name || "System",
-                  date: new Date(log.created_at).toLocaleDateString(),
-              }));
+            realAuditLogs = auditData.total || 0;
           }
         } catch (e) {}
 
@@ -143,6 +144,16 @@ export default function AdminDashboard() {
           }
         } catch (e) {}
 
+        // 6. Fetch Recent Activities (Audit logs)
+        let realActivities = [];
+        try {
+          const actRes = await fetch("/api/audit");
+          if (actRes.ok) {
+            const actData = await actRes.json();
+            realActivities = actData.slice(0, 5); // Grab top 5 most recent
+          }
+        } catch (e) {}
+
         // 5. Update the state securely with all our real data
         setStats((prev) => ({
           ...prev,
@@ -150,13 +161,18 @@ export default function AdminDashboard() {
           totalSubjects: statsData.totalSubjects ?? prev.totalSubjects,
           totalCourses: statsData.totalCourses ?? prev.totalCourses,
           totalEnrollments: statsData.totalEnrollments ?? prev.totalEnrollments,
-          programDistribution: statsData.programDistribution ? statsData.programDistribution.map(d => ({ name: d.name, value: parseInt(d.value, 10) })) : prev.programDistribution,
+          programDistribution: statsData.programDistribution
+            ? statsData.programDistribution.map((d) => ({
+                name: d.name,
+                value: parseInt(d.value, 10),
+              }))
+            : prev.programDistribution,
 
           activeUsers: realActiveUsers, // <--- Now uses the real database count!
           pendingEnrollments: realPending,
           recentEnrollees: realRecent,
+          recentActivities: realActivities,
           auditLogs: realAuditLogs,
-          recentActivity: recentActivity,
           enrollmentTrends: calculatedTrends,
         }));
       } catch (err) {
@@ -171,35 +187,38 @@ export default function AdminDashboard() {
     <DashboardLayout>
       <div className="dashboard-container">
         {/* Header Section */}
-        <div className="admin-header-section" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "15px" }}>
+        <div
+          className="admin-header-section"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <div>
             <h1 className="dashboard-header">Admin Dashboard</h1>
             <p className="header-subtitle">
               Overview of your university stats and data.
             </p>
           </div>
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-            <button 
+
+          {/* Quick Actions */}
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button
               onClick={() => navigate("/admin/users")}
-              style={{ padding: "8px 16px", background: "white", color: "var(--orange-500)", border: "1px solid var(--orange-500)", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", transition: "all 0.2s", display: "flex", alignItems: "center", gap: "6px" }}
-              onMouseOver={(e) => { e.currentTarget.style.background = "var(--orange-500)"; e.currentTarget.style.color = "white"; }}
-              onMouseOut={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.color = "var(--orange-500)"; }}
+              className="quick-action-btn primary"
             >
               <Plus size={16} /> Add New Student
             </button>
-            <button 
+            <button
               onClick={() => navigate("/admin/subjects")}
-              style={{ padding: "8px 16px", background: "white", color: "var(--orange-500)", border: "1px solid var(--orange-500)", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", transition: "all 0.2s", display: "flex", alignItems: "center", gap: "6px" }}
-              onMouseOver={(e) => { e.currentTarget.style.background = "var(--orange-500)"; e.currentTarget.style.color = "white"; }}
-              onMouseOut={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.color = "var(--orange-500)"; }}
+              className="quick-action-btn secondary"
             >
-              <Plus size={16} /> Add New Subject
+              <FileText size={16} /> Add New Subject
             </button>
-            <button 
+            <button
               onClick={() => navigate("/admin/enrollments")}
-              style={{ padding: "8px 16px", background: "white", color: "var(--orange-500)", border: "1px solid var(--orange-500)", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", transition: "all 0.2s", display: "flex", alignItems: "center", gap: "6px" }}
-              onMouseOver={(e) => { e.currentTarget.style.background = "var(--orange-500)"; e.currentTarget.style.color = "white"; }}
-              onMouseOut={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.color = "var(--orange-500)"; }}
+              className="quick-action-btn info"
             >
               <FileText size={16} /> Review Pending Enrollments
             </button>
@@ -281,9 +300,8 @@ export default function AdminDashboard() {
 
         {/* --- MAIN CONTENT GRID (Chart & Table) --- */}
         <div className="dashboard-content">
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            {/* Time Series Chart */}
-            <div className="chart-section">
+          {/* Time Series Chart */}
+          <div className="chart-section">
             <h2 className="section-title">
               <Activity
                 size={18}
@@ -295,57 +313,61 @@ export default function AdminDashboard() {
               />
               Enrollment Overview
             </h2>
-            <div style={{ width: "100%", height: "350px", overflowX: "auto" }}>
-                <LineChart
-                  width={600}
-                  height={300}
-                  data={stats.enrollmentTrends}
-                  margin={{ top: 15, right: 20, bottom: 5, left: 0 }}
-                >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="#e2e8f0"
-                  />
-                  <XAxis
-                    dataKey="name"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#64748b", fontSize: 12 }}
-                  />
-
-                  <YAxis
-                    allowDecimals={false}
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#64748b", fontSize: 12 }}
-                  />
-
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: "8px",
-                      border: "none",
-                      boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                    }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="enrollments"
-                    stroke="#3b82f6"
-                    strokeWidth={3}
-                    dot={{
-                      r: 4,
-                      fill: "#3b82f6",
-                      strokeWidth: 2,
-                      stroke: "white",
-                    }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
+            {/* Enrollment Trends Line Chart (Chart.js) */}
+            <div
+              style={{ width: "100%", height: "350px", position: "relative" }}
+            >
+              <Line
+                data={{
+                  labels: stats.enrollmentTrends.map((d) => d.name),
+                  datasets: [
+                    {
+                      label: "Enrollments",
+                      data: stats.enrollmentTrends.map((d) => d.enrollments),
+                      borderColor: "#3b82f6",
+                      backgroundColor: "rgba(59, 130, 246, 0.5)",
+                      tension: 0.3,
+                      pointRadius: 4,
+                      pointBackgroundColor: "#3b82f6",
+                      borderWidth: 3,
+                    },
+                  ],
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        stepSize: 1,
+                      },
+                      grid: {
+                        color: "#f1f5f9",
+                      },
+                    },
+                    x: {
+                      grid: {
+                        display: false,
+                      },
+                    },
+                  },
+                  plugins: {
+                    legend: {
+                      display: false,
+                    },
+                    tooltip: {
+                      backgroundColor: "rgba(15, 23, 42, 0.9)",
+                      padding: 10,
+                      borderRadius: 8,
+                    },
+                  },
+                }}
+              />
             </div>
           </div>
 
-          {/* Demographics Pie Chart */}
+          {/* Demographics Doughnut Chart (Chart.js) */}
           <div className="chart-section">
             <h2 className="section-title">
               <PieChartIcon
@@ -358,133 +380,176 @@ export default function AdminDashboard() {
               />
               Student Demographics (By Program)
             </h2>
-            <div style={{ width: "100%", height: "400px", overflowX: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
-              {stats.programDistribution && stats.programDistribution.length > 0 ? (
-                <div style={{ position: "relative", width: "100%", maxWidth: "700px", height: "350px" }}>
+            <div
+              style={{
+                width: "100%",
+                height: "400px",
+                overflowX: "auto",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {stats.programDistribution &&
+              stats.programDistribution.length > 0 ? (
+                <div
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                    maxWidth: "700px",
+                    height: "350px",
+                  }}
+                >
                   <Doughnut
                     data={{
-                      labels: stats.programDistribution.map(d => d.name),
-                      datasets: [{
-                        data: stats.programDistribution.map(d => d.value),
-                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316', '#14b8a6', '#475569'],
-                        borderWidth: 2,
-                        hoverOffset: 4
-                      }]
+                      labels: stats.programDistribution.map((d) => d.name),
+                      datasets: [
+                        {
+                          data: stats.programDistribution.map((d) => d.value),
+                          backgroundColor: [
+                            "#3b82f6",
+                            "#10b981",
+                            "#f59e0b",
+                            "#ef4444",
+                            "#8b5cf6",
+                            "#06b6d4",
+                            "#f97316",
+                            "#14b8a6",
+                            "#475569",
+                          ],
+                          borderWidth: 2,
+                          hoverOffset: 4,
+                        },
+                      ],
                     }}
                     options={{
                       responsive: true,
                       maintainAspectRatio: false,
                       plugins: {
-                        legend: { 
-                          position: 'right',
-                          labels: { font: { size: 13, family: "Segoe UI" }, padding: 20 }
-                        }
-                      }
+                        legend: {
+                          position: "right",
+                          labels: {
+                            font: { size: 13, family: "Segoe UI" },
+                            padding: 20,
+                          },
+                        },
+                      },
                     }}
                   />
                 </div>
               ) : (
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", color: "#888" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                    color: "#888",
+                  }}
+                >
                   No demographic data available.
                 </div>
               )}
             </div>
           </div>
-        </div>
 
-          {/* Right Column Stack (Recent Enrollees + Recent Activity) */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            {/* Recent Enrollees Table */}
-            <div className="table-section">
-              <h2 className="section-title">Recent Enrollees</h2>
-              <div style={{ overflowX: "auto" }}>
-                <table className="recent-table">
-                  <thead>
-                    <tr>
-                      <th>Student Name</th>
-                      <th>Course/Subject</th>
-                      <th>Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {stats?.recentEnrollees &&
-                    stats.recentEnrollees.length > 0 ? (
-                      stats.recentEnrollees.map((student) => (
-                        <tr key={student.id}>
-                          <td>
-                            <strong>{student.name}</strong>
-                          </td>
-                          <td>{student.course}</td>
-                          <td>{student.date}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td
-                          colSpan="3"
-                          style={{
-                            textAlign: "center",
-                            padding: "20px",
-                            color: "#888",
-                          }}
-                        >
-                          No recent enrollees found.
+          {/* Recent Enrollees Table */}
+          <div className="table-section">
+            <h2 className="section-title">Recent Enrollees</h2>
+            <div style={{ overflowX: "auto" }}>
+              <table className="recent-table">
+                <thead>
+                  <tr>
+                    <th>Student Name</th>
+                    <th>Course/Subject</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stats?.recentEnrollees &&
+                  stats.recentEnrollees.length > 0 ? (
+                    stats.recentEnrollees.map((student) => (
+                      <tr key={student.id}>
+                        <td>
+                          <strong>{student.name}</strong>
                         </td>
+                        <td>{student.course}</td>
+                        <td>{student.date}</td>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="3"
+                        style={{
+                          textAlign: "center",
+                          padding: "20px",
+                          color: "#888",
+                        }}
+                      >
+                        No recent enrollees found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
+          </div>
 
-            {/* Recent Activity Log */}
-            <div className="table-section">
-              <h2 className="section-title">Recent Activity</h2>
-              <div style={{ overflowX: "auto" }}>
-                <table className="recent-table">
-                  <thead>
-                    <tr>
-                      <th>User</th>
-                      <th>Action</th>
-                      <th>Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {stats?.recentActivity &&
-                    stats.recentActivity.length > 0 ? (
-                      stats.recentActivity.map((log) => {
-                        let color = "#333";
-                        if (log.action.includes("CREATE") || log.action.includes("REGISTER") || log.action.includes("ENROLL")) color = "#28a745";
-                        if (log.action.includes("DELETE") || log.action.includes("DROP") || log.action.includes("ARCHIVE") || log.action.includes("REJECT")) color = "#dc3545";
-                        if (log.action.includes("UPDATE") || log.action.includes("LOGIN") || log.action.includes("APPROVE")) color = "#007bff";
-                        
-                        return (
-                          <tr key={log.id}>
-                            <td>
-                              <strong>{log.user}</strong>
-                            </td>
-                            <td style={{ color, fontWeight: "bold" }}>{log.action}</td>
-                            <td>{log.date}</td>
-                          </tr>
-                        );
-                      })
-                    ) : (
-                      <tr>
-                        <td
-                          colSpan="3"
-                          style={{
-                            textAlign: "center",
-                            padding: "20px",
-                            color: "#888",
-                          }}
-                        >
-                          No recent activity found.
+          {/* Recent Activities Table */}
+          <div className="table-section">
+            <h2 className="section-title">
+              <ScrollText
+                size={18}
+                style={{
+                  display: "inline",
+                  marginRight: "8px",
+                  verticalAlign: "text-bottom",
+                }}
+              />
+              Recent Activities
+            </h2>
+            <div style={{ overflowX: "auto" }}>
+              <table className="recent-table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stats?.recentActivities &&
+                  stats.recentActivities.length > 0 ? (
+                    stats.recentActivities.map((log) => (
+                      <tr key={log.id}>
+                        <td>
+                          <strong>
+                            {log.user_name || log.email || "System"}
+                          </strong>
                         </td>
+                        <td>
+                          {log.action} - {log.details}
+                        </td>
+                        <td>{new Date(log.created_at).toLocaleString()}</td>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="3"
+                        style={{
+                          textAlign: "center",
+                          padding: "20px",
+                          color: "#888",
+                        }}
+                      >
+                        No recent activities found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

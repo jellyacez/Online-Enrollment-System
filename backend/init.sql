@@ -4,8 +4,6 @@ CREATE DATABASE enrollment_system_db;
 
 USE enrollment_system_db;
 
-select * from users;
-
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(255) NOT NULL,

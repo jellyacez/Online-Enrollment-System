@@ -148,3 +148,51 @@
     transform: translateY(0);
   }
 }
+
+/* Quick Action Buttons */
+.quick-action-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  border: none;
+}
+
+.quick-action-btn.primary {
+  background-color: var(--orange-500);
+  color: white;
+}
+
+.quick-action-btn.primary:hover {
+  background-color: var(--orange-600);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(249, 115, 22, 0.2);
+}
+
+.quick-action-btn.secondary {
+  background-color: white;
+  color: var(--orange-500);
+  border: 1px solid var(--orange-500);
+}
+
+.quick-action-btn.secondary:hover {
+  background-color: var(--orange-50);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.quick-action-btn.info {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.quick-action-btn.info:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+}
