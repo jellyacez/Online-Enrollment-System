@@ -208,3 +208,27 @@ html, body, #root {
     padding: 16px;
   }
 }
+
+.pagination-btn {
+  padding: 8px 16px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.pagination-btn.active {
+  background: var(--priamry);
+  cursor: pointer;
+}
+
+.pagination-btn.active:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.pagination-btn.disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}

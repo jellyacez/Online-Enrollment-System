@@ -11,6 +11,7 @@ import AdminEnrollments from "./pages/AdminEnrollments";
 import AuditLogs from "./pages/AuditLogs";
 import AdminSettings from "./pages/AdminSettings";
 import UserManagement from "./pages/UserManagement";
+import AdminSubjects from "./pages/AdminSubjects";
 
 const ProtectedRoute = ({ children, requiredRole }) => {
   const token = localStorage.getItem("token");
@@ -49,6 +50,7 @@ export default function Routing() {
         <Route path="/admin/dashboard" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/enrollments" element={<ProtectedRoute requiredRole="admin"><AdminEnrollments /></ProtectedRoute>} />
         <Route path="/admin/users" element={<ProtectedRoute requiredRole="admin"><UserManagement /></ProtectedRoute>} />
+        <Route path="/admin/subjects" element={<ProtectedRoute requiredRole="admin"><AdminSubjects /></ProtectedRoute>} />
         <Route path="/admin/audit-logs" element={<ProtectedRoute requiredRole="admin"><AuditLogs /></ProtectedRoute>} />
         <Route path="/admin/settings" element={<ProtectedRoute requiredRole="admin"><AdminSettings /></ProtectedRoute>} />
         

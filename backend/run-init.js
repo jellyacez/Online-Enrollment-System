@@ -16,8 +16,10 @@ async function runSQL() {
         
         await connection.query(sql);
         console.log('init.sql executed successfully!');
-        
         await connection.end();
+
+        console.log('Automatically creating default admin account...');
+        require('child_process').execSync('node createAdmin.js', { stdio: 'inherit' });
     } catch (err) {
         console.error('Error executing SQL:', err);
     }

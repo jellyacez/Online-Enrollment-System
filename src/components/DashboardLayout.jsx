@@ -1,5 +1,26 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  Home,
+  User,
+  Bell,
+  Megaphone,
+  BarChart2,
+  HeartPulse,
+  Calendar,
+  Wallet,
+  FileText,
+  Users,
+  Library,
+  ClipboardList,
+  Settings,
+  LogOut,
+  Search,
+  Edit2,
+  Save,
+  LayoutGrid,
+  List
+} from "lucide-react";
 
 export const DashboardContext = createContext();
 import Logo from "../assets/UniLogo.png";
@@ -238,23 +259,24 @@ export default function DashboardLayout({ children }) {
   const closeModal = () => setActiveModal(null);
 
   const studentCards = [
-    { key: "home", icon: "🏠", label: "Home", color: "#FF6B00", isRoute: true, route: "/home" },
-    { key: "profile", icon: "👤", label: "My Profile", color: "#FF6B00", isRoute: true, route: "/profile" },
-    { key: "notifications", icon: "🔔", label: "Notifications", color: "#FF8C38", badge: SAMPLE_NOTIFICATIONS.filter((n) => n.unread).length },
-    { key: "announcements", icon: "📢", label: "Announcements", color: "#E85D00" },
-    { key: "grades", icon: "📊", label: "Grades", color: "#CC5500" },
-    { key: "medical", icon: "🏥", label: "Medical", color: "#FF7A1A" },
-    { key: "calendar", icon: "📅", label: "Calendar", color: "#D46A00" },
-    { key: "balance", icon: "💰", label: "Balance", color: "#B84D00" },
-    { key: "enrollment", icon: "📝", label: "Enrollment", color: "#FF9933", isRoute: true, route: "/student-management" },
+    { key: "home", icon: <Home size={20} />, label: "Home", color: "#FF6B00", isRoute: true, route: "/home" },
+    { key: "profile", icon: <User size={20} />, label: "My Profile", color: "#FF6B00", isRoute: true, route: "/profile" },
+    { key: "notifications", icon: <Bell size={20} />, label: "Notifications", color: "#FF8C38", badge: SAMPLE_NOTIFICATIONS.filter((n) => n.unread).length },
+    { key: "announcements", icon: <Megaphone size={20} />, label: "Announcements", color: "#E85D00" },
+    { key: "grades", icon: <BarChart2 size={20} />, label: "Grades", color: "#CC5500" },
+    { key: "medical", icon: <HeartPulse size={20} />, label: "Medical", color: "#FF7A1A" },
+    { key: "calendar", icon: <Calendar size={20} />, label: "Calendar", color: "#D46A00" },
+    { key: "balance", icon: <Wallet size={20} />, label: "Balance", color: "#B84D00" },
+    { key: "enrollment", icon: <FileText size={20} />, label: "Enrollment", color: "#FF9933", isRoute: true, route: "/student-management" },
   ];
 
   const adminCards = [
-    { key: "dashboard", icon: "🏠", label: "Dashboard", color: "#FF6B00", isRoute: true, route: "/admin/dashboard" },
-    { key: "enrollments", icon: "📝", label: "Enrollment Requests", color: "#FF7A1A", isRoute: true, route: "/admin/enrollments" },
-    { key: "users", icon: "👥", label: "User Management", color: "#FF8C38", isRoute: true, route: "/admin/users" },
-    { key: "audit", icon: "📋", label: "Audit Logs", color: "#E85D00", isRoute: true, route: "/admin/audit-logs" },
-    { key: "settings", icon: "⚙️", label: "Settings", color: "#CC5500", isRoute: true, route: "/admin/settings" },
+    { key: "dashboard", icon: <Home size={20} />, label: "Dashboard", color: "#FF6B00", isRoute: true, route: "/admin/dashboard" },
+    { key: "enrollments", icon: <FileText size={20} />, label: "Enrollment Requests", color: "#FF7A1A", isRoute: true, route: "/admin/enrollments" },
+    { key: "users", icon: <Users size={20} />, label: "User Management", color: "#FF8C38", isRoute: true, route: "/admin/users" },
+    { key: "subjects", icon: <Library size={20} />, label: "Manage Subjects", color: "#D46A00", isRoute: true, route: "/admin/subjects" },
+    { key: "audit", icon: <ClipboardList size={20} />, label: "Audit Logs", color: "#E85D00", isRoute: true, route: "/admin/audit-logs" },
+    { key: "settings", icon: <Settings size={20} />, label: "Settings", color: "#CC5500", isRoute: true, route: "/admin/settings" },
   ];
 
   const sidebarCards = user.role === 'admin' ? adminCards : studentCards;
@@ -287,7 +309,7 @@ export default function DashboardLayout({ children }) {
           ))}
           <hr className="sidebar-divider" />
           <button className="sidebar-link sidebar-exit" onClick={() => openModal("exit")}>
-            <span className="sidebar-icon">🚪</span> Exit / Logout
+            <span className="sidebar-icon"><LogOut size={20} /></span> Exit / Logout
           </button>
         </nav>
       </div>

@@ -53,17 +53,20 @@ exports.updateEnrollmentStatus = async (req, res) => {
     try {
         const { status } = req.body;
         
-        // If accepting, check section limits and increment
-        if (status === 'enrolled') {
-            const [[enrollment]] = await pool.query('SELECT section_id FROM enrollments WHERE id = ?', [req.params.id]);
-            if (!enrollment) return res.status(404).json({ message: 'Enrollment not found' });
+        const [[enrollment]] = await pool.query('SELECT section_id, status FROM enrollments WHERE id = ?', [req.params.id]);
+        if (!enrollment) return res.status(404).json({ message: 'Enrollment not found' });
 
+        // If newly accepting, check limits and increment
+        if (status === 'enrolled' && enrollment.status !== 'enrolled') {
             const [[section]] = await pool.query('SELECT max_slots, enrolled_slots FROM sections WHERE id = ?', [enrollment.section_id]);
             if (section.enrolled_slots >= section.max_slots) {
                 return res.status(400).json({ message: 'Section is full. Cannot approve.' });
             }
-
             await pool.query('UPDATE sections SET enrolled_slots = enrolled_slots + 1 WHERE id = ?', [enrollment.section_id]);
+        } 
+        // If un-enrolling (e.g., rejecting an already enrolled student)
+        else if (status !== 'enrolled' && enrollment.status === 'enrolled') {
+            await pool.query('UPDATE sections SET enrolled_slots = enrolled_slots - 1 WHERE id = ? AND enrolled_slots > 0', [enrollment.section_id]);
         }
 
         const [result] = await pool.query(
@@ -71,10 +74,6 @@ exports.updateEnrollmentStatus = async (req, res) => {
             [status, req.params.id]
         );
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Enrollment not found' });
-        }
-        
         res.json({ message: 'Enrollment status updated successfully' });
     } catch (error) {
         console.error('Error updating enrollment:', error);
@@ -85,13 +84,20 @@ exports.updateEnrollmentStatus = async (req, res) => {
 // Delete an enrollment
 exports.deleteEnrollment = async (req, res) => {
     try {
-        const [result] = await pool.query('DELETE FROM enrollments WHERE id = ?', [req.params.id]);
-        
-        if (result.affectedRows === 0) {
+        // Fetch before deleting to know the section and status
+        const [[enrollment]] = await pool.query('SELECT section_id, status FROM enrollments WHERE id = ?', [req.params.id]);
+        if (!enrollment) {
             return res.status(404).json({ message: 'Enrollment not found' });
         }
+
+        const [result] = await pool.query('DELETE FROM enrollments WHERE id = ?', [req.params.id]);
         
-        await logAction(null, 'DROP_SUBJECT', `Dropped enrollment ID ${req.params.id}`); // Ideally get user id from req.user if auth middleware was present
+        // Decrement section slot if they were actively enrolled
+        if (enrollment.status === 'enrolled') {
+            await pool.query('UPDATE sections SET enrolled_slots = enrolled_slots - 1 WHERE id = ? AND enrolled_slots > 0', [enrollment.section_id]);
+        }
+        
+        await logAction(null, 'DROP_SUBJECT', `Dropped enrollment ID ${req.params.id}`);
 
         res.json({ message: 'Enrollment deleted successfully' });
     } catch (error) {

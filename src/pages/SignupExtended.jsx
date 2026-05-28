@@ -45,7 +45,7 @@ export default function SignupExtended() {
           program,
           second_choice_course: secondChoice,
           last_school: lastSchool,
-          current_level: currentLevel
+          current_level: studentType === "new" ? "1st Year" : currentLevel,
         }),
       });
 
@@ -54,7 +54,11 @@ export default function SignupExtended() {
       try {
         data = JSON.parse(text);
       } catch (parseErr) {
-        throw new Error(response.ok ? "Invalid server response." : `Server is unreachable (Status: ${response.status}). Is the backend running?`);
+        throw new Error(
+          response.ok
+            ? "Invalid server response."
+            : `Server is unreachable (Status: ${response.status}). Is the backend running?`,
+        );
       }
 
       if (!response.ok) {
@@ -62,7 +66,9 @@ export default function SignupExtended() {
       }
 
       // Success, go to login
-      navigate("/login", { state: { message: "Extended registration successful! Please login." } });
+      navigate("/login", {
+        state: { message: "Extended registration successful! Please login." },
+      });
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -76,42 +82,71 @@ export default function SignupExtended() {
           &larr; Back
         </button>
         <img src={Logo} className="Uni-Logo" alt="University Logo" />
-        <h2>{studentType === 'transferee' ? "Transferee Registration" : "New Enrollee Registration"}</h2>
+        <h2>
+          {studentType === "transferee"
+            ? "Transferee Registration"
+            : "New Enrollee Registration"}
+        </h2>
         <p style={{ textAlign: "center", opacity: 0.8, marginBottom: "20px" }}>
           Please complete your profile to finish setting up your account.
         </p>
 
         {error && (
-          <div style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>
+          <div
+            style={{ color: "red", marginBottom: "10px", textAlign: "center" }}
+          >
             {error}
           </div>
         )}
 
-        <form onSubmit={handleExtendedSignUp} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-          
-          <div className="info-group" style={{ gridColumn: '1 / span 2' }}>
+        <form
+          onSubmit={handleExtendedSignUp}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "15px",
+          }}
+        >
+          <div className="info-group" style={{ gridColumn: "1 / span 2" }}>
             <label htmlFor="address">Home Address</label>
-            <input type="text" id="address" value={address} onChange={(e) => setAddress(e.target.value)} required placeholder="Full Address" />
+            <input
+              type="text"
+              id="address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              required
+              placeholder="Full Address"
+            />
           </div>
 
           <div className="info-group">
             <label htmlFor="phone">Contact Number</label>
-            <input 
-              type="tel" 
-              id="phone" 
-              value={phone} 
+            <input
+              type="tel"
+              id="phone"
+              value={phone}
               onChange={(e) => {
-                const val = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                const val = e.target.value.replace(/\D/g, ""); // Remove non-digits
                 setPhone(val);
-              }} 
-              required 
-              placeholder="09XXXXXXXXX" 
+              }}
+              required
+              placeholder="09XXXXXXXXX"
+              pattern="09[0-9]{9}"
+              title="Enter a valid 11-digit mobile number"
+              minLength={11}
+              maxLength={11}
             />
           </div>
 
           <div className="info-group">
             <label htmlFor="dob">Date of Birth</label>
-            <input type="date" id="dob" value={dob} onChange={(e) => setDob(e.target.value)} required />
+            <input
+              type="date"
+              id="dob"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              required
+            />
           </div>
 
           <datalist id="courseOptions">
@@ -127,42 +162,137 @@ export default function SignupExtended() {
 
           <div className="info-group">
             <label htmlFor="program">First Choice Course</label>
-            <input 
-              type="text" 
-              id="program" 
+            {/* <input
+              type="text"
+              id="program"
               list="courseOptions"
-              value={program} 
-              onChange={(e) => setProgram(e.target.value)} 
-              required 
-              placeholder="Type or select a course" 
-            />
+              value={program}
+              onChange={(e) => setProgram(e.target.value)}
+              required
+              placeholder="Type or select a course"
+            /> */}
+            <select
+              id="program"
+              required
+              value={program}
+              onChange={(e) => setProgram(e.target.value)}
+            >
+              <option value="">Select a course</option>
+
+              <option value="BS Information Technology">
+                BS Information Technology
+              </option>
+
+              <option value="BS Computer Science">BS Computer Science</option>
+
+              <option value="BS Information Systems">
+                BS Information Systems
+              </option>
+
+              <option value="BS Business Administration">
+                BS Business Administration
+              </option>
+
+              <option value="BS Accountancy">BS Accountancy</option>
+
+              <option value="BS Nursing">BS Nursing</option>
+
+              <option value="BS Civil Engineering">BS Civil Engineering</option>
+
+              <option value="BS Mechanical Engineering">
+                BS Mechanical Engineering
+              </option>
+            </select>
           </div>
 
           <div className="info-group">
             <label htmlFor="secondChoice">Second Choice Course</label>
-            <input 
-              type="text" 
-              id="secondChoice" 
+
+            <select
+              id="secondChoice"
+              required
+              value={secondChoice}
+              onChange={(e) => setSecondChoice(e.target.value)}
+            >
+              <option value="">Select a course</option>
+
+              <option value="BS Information Technology">
+                BS Information Technology
+              </option>
+
+              <option value="BS Computer Science">BS Computer Science</option>
+
+              <option value="BS Information Systems">
+                BS Information Systems
+              </option>
+
+              <option value="BS Business Administration">
+                BS Business Administration
+              </option>
+
+              <option value="BS Accountancy">BS Accountancy</option>
+
+              <option value="BS Nursing">BS Nursing</option>
+
+              <option value="BS Civil Engineering">BS Civil Engineering</option>
+
+              <option value="BS Mechanical Engineering">
+                BS Mechanical Engineering
+              </option>
+            </select>
+            {/* <input
+              type="text"
+              id="secondChoice"
               list="courseOptions"
-              value={secondChoice} 
-              onChange={(e) => setSecondChoice(e.target.value)} 
-              placeholder="Type or select a course" 
+              value={secondChoice}
+              onChange={(e) => setSecondChoice(e.target.value)}
+              placeholder="Type or select a course"
+            /> */}
+          </div>
+
+          <div
+            className="info-group"
+            style={{
+              gridColumn: studentType === "transferee" ? "1" : "1 / span 2",
+            }}
+          >
+            <label htmlFor="lastSchool">Last School Attended</label>
+            <input
+              type="text"
+              id="lastSchool"
+              value={lastSchool}
+              onChange={(e) => setLastSchool(e.target.value)}
+              required
+              placeholder="School Name"
             />
           </div>
 
-          <div className="info-group" style={{ gridColumn: studentType === 'transferee' ? '1' : '1 / span 2' }}>
-            <label htmlFor="lastSchool">Last School Attended</label>
-            <input type="text" id="lastSchool" value={lastSchool} onChange={(e) => setLastSchool(e.target.value)} required placeholder="School Name" />
-          </div>
-
-          {studentType === 'transferee' && (
+          {studentType === "transferee" && (
             <div className="info-group">
               <label htmlFor="currentLevel">Current Level (Transferee)</label>
-              <input type="text" id="currentLevel" value={currentLevel} onChange={(e) => setCurrentLevel(e.target.value)} required placeholder="e.g. 2nd Year" />
+              {/* <input
+                type="text"
+                id="currentLevel"
+                value={currentLevel}
+                onChange={(e) => setCurrentLevel(e.target.value)}
+                required
+                placeholder="e.g. 2nd Year"
+              /> */}
+              <select
+                id="secondChoice"
+                required
+                value={currentLevel}
+                onChange={(e) => setCurrentLevel(e.target.value)}
+              >
+                <option value="">Enter Year</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+              </select>
             </div>
           )}
 
-          <div style={{ gridColumn: '1 / span 2', marginTop: "10px" }}>
+          <div style={{ gridColumn: "1 / span 2", marginTop: "10px" }}>
             <button type="submit" className="submit-btn" disabled={loading}>
               {loading ? "Registering..." : "Complete Registration"}
             </button>

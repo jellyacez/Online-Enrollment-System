@@ -7,7 +7,7 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLogin, setIsLogin] = useState(true);
-  
+
   // Form States
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,14 +16,17 @@ export default function Login() {
   const [error, setError] = useState(location.state?.message || "");
   const [loading, setLoading] = useState(false);
 
+  // Password Visibility State
+  const [showPassword, setShowPassword] = useState(false);
+
   // Clear URL state so message doesn't persist on reload
   useEffect(() => {
     if (location.state?.message) {
-      window.history.replaceState({}, document.title)
+      window.history.replaceState({}, document.title);
     }
   }, [location]);
 
-  const [studentType, setStudentType] = useState("old");
+  const [studentType, setStudentType] = useState("new");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -47,7 +50,7 @@ export default function Login() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      if (data.user.role === 'admin') {
+      if (data.user.role === "admin") {
         navigate("/admin/dashboard");
       } else {
         navigate("/home");
@@ -73,43 +76,27 @@ export default function Login() {
       return;
     }
 
-    if (studentType !== "old") {
-      // Redirect to extended signup with basic details
-      navigate("/signup-extended", {
-        state: { name, email, password, studentType }
-      });
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ full_name: name, email, password, student_type: studentType }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
-      }
-
-      // Automatically switch to login mode after successful registration
-      setIsLogin(true);
-      setError("Registration successful! Please login.");
-      setPassword("");
-      setConpassword("");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    // Redirect all new signups to extended signup with basic details
+    navigate("/signup-extended", {
+      state: { name, email, password, studentType },
+    });
   };
 
   const handleGoogleLogin = () => {
     console.log("Google Auth Triggered");
+  };
+
+  // Reusable inline styles for the toggle button
+  const toggleBtnStyle = {
+    position: "absolute",
+    right: "10px",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "14px",
+    color: "#666",
+    fontWeight: "600",
+    outline: "none",
   };
 
   return (
@@ -122,7 +109,13 @@ export default function Login() {
         <h2>{isLogin ? "Welcome Back" : "Create an Account"}</h2>
 
         {error && (
-          <div style={{ color: error.includes("successful") ? "green" : "red", marginBottom: "10px", textAlign: "center" }}>
+          <div
+            style={{
+              color: error.includes("successful") ? "green" : "red",
+              marginBottom: "10px",
+              textAlign: "center",
+            }}
+          >
             {error}
           </div>
         )}
@@ -143,21 +136,43 @@ export default function Login() {
             </div>
             <div className="info-group">
               <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="********"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div
+                style={{
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  placeholder="********"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={{ width: "100%", paddingRight: "60px" }} // Give room for the text button
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={toggleBtnStyle}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
             </div>
             <button type="submit" className="submit-btn" disabled={loading}>
               {loading ? "Logging in..." : "Login"}
             </button>
             <div className="toggle-wrapper">
-              <span className="toggle-text" onClick={() => setIsLogin(false)}>
+              <span
+                className="toggle-text"
+                onClick={() => {
+                  setIsLogin(false);
+                  setShowPassword(false);
+                }}
+              >
                 No account? <strong>Sign up here.</strong>
               </span>
             </div>
@@ -185,11 +200,15 @@ export default function Login() {
                 onChange={(e) => setStudentType(e.target.value)}
                 required
                 style={{
-                  width: "100%", padding: "10px", marginTop: "5px", marginBottom: "15px",
-                  border: "1px solid #ccc", borderRadius: "4px", fontSize: "14px"
+                  width: "100%",
+                  padding: "10px",
+                  marginTop: "5px",
+                  marginBottom: "15px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                  fontSize: "14px",
                 }}
               >
-                <option value="old">Old Student</option>
                 <option value="new">New Enrollee</option>
                 <option value="transferee">Transferee</option>
               </select>
@@ -208,33 +227,71 @@ export default function Login() {
             </div>
             <div className="info-group">
               <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="Create a password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div
+                style={{
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  placeholder="Create a password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={{ width: "100%", paddingRight: "60px" }}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={toggleBtnStyle}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
             </div>
             <div className="info-group">
               <label htmlFor="conpassword">Confirm Password</label>
-              <input
-                type="password"
-                id="conpassword"
-                name="conpassword"
-                placeholder="Confirm password"
-                value={conpassword}
-                onChange={(e) => setConpassword(e.target.value)}
-                required
-              />
+              <div
+                style={{
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="conpassword"
+                  name="conpassword"
+                  placeholder="Confirm password"
+                  value={conpassword}
+                  onChange={(e) => setConpassword(e.target.value)}
+                  style={{ width: "100%", paddingRight: "60px" }}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={toggleBtnStyle}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
             </div>
             <button type="submit" className="submit-btn" disabled={loading}>
               {loading ? "Signing up..." : "Sign Up"}
             </button>
             <div className="toggle-wrapper">
-              <span className="toggle-text" onClick={() => setIsLogin(true)}>
+              <span
+                className="toggle-text"
+                onClick={() => {
+                  setIsLogin(true);
+                  setShowPassword(false);
+                }}
+              >
                 Already have an account? <strong>Login here.</strong>
               </span>
             </div>

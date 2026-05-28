@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from "react";
+import { Calendar, LogOut, Wallet, Bell, Megaphone, BarChart2, HeartPulse, FileText } from "lucide-react";
 import DashboardLayout, { DashboardContext } from "../components/DashboardLayout";
-import { SAMPLE_BALANCE, SAMPLE_NOTIFICATIONS } from "../utils/dummyData";
+import "../css/Homepage.css";
+import { SAMPLE_NOTIFICATIONS, SAMPLE_BALANCE } from "../utils/dummyData";
 
 // Simplified version of the calendar for the quick glance
 function CalendarWidgetMini() {
@@ -50,7 +52,7 @@ export default function Homepage() {
 function HomepageContent() {
   const { openModal, searchQuery } = useContext(DashboardContext);
   
-  const user = JSON.parse(localStorage.getItem("user")) || { full_name: "Kevin Aceroano", id: "2024-00123" };
+  const user = JSON.parse(localStorage.getItem("user")) || { full_name: "Kevin Aceroano", email: "dummy@email.com", id: "2024-00123" };
   const studentName = user.full_name;
   const studentId = user.id;
   const program = "BS Information Technology";
@@ -62,24 +64,25 @@ function HomepageContent() {
     fetch("/api/enrollments")
       .then(res => res.json())
       .then(data => {
+        // Filter strictly by the current user's email to ensure they only see their own subjects
         const myEnrolled = data.filter(e => 
-          (e.student_name === user.full_name || true) && e.status === 'enrolled'
+          e.student_email === user.email && e.status === 'enrolled'
         );
         setEnrollments(myEnrolled);
       })
       .catch(err => console.error("Failed to fetch enrollments", err));
-  }, [user.full_name]);
+  }, [user.email]);
 
-  const dashboardCards = [
-    { key: "notifications", icon: "🔔", label: "Notifications", color: "#FF8C38", badge: SAMPLE_NOTIFICATIONS.filter((n) => n.unread).length },
-    { key: "announcements", icon: "📢", label: "Announcements", color: "#E85D00" },
-    { key: "grades", icon: "📊", label: "Grades", color: "#CC5500" },
-    { key: "medical", icon: "🏥", label: "Medical", color: "#FF7A1A" },
-    { key: "balance", icon: "💰", label: "Balance", color: "#B84D00" },
-    { key: "enrollment", icon: "📝", label: "Enrollment Summary", color: "#FF9933" },
+  const studentCards = [
+    { key: "notifications", icon: <Bell size={24} />, label: "Notifications", color: "#FF8C38", badge: SAMPLE_NOTIFICATIONS.filter((n) => n.unread).length },
+    { key: "announcements", icon: <Megaphone size={24} />, label: "Announcements", color: "#E85D00" },
+    { key: "grades", icon: <BarChart2 size={24} />, label: "Grades", color: "#CC5500" },
+    { key: "medical", icon: <HeartPulse size={24} />, label: "Medical", color: "#FF7A1A" },
+    { key: "balance", icon: <Wallet size={24} />, label: "Balance", color: "#B84D00" },
+    { key: "enrollment", icon: <FileText size={24} />, label: "Enrollment Summary", color: "#FF9933" },
   ];
 
-  const filteredCards = dashboardCards.filter((c) =>
+  const filteredCards = studentCards.filter((c) =>
     c.label.toLowerCase().includes((searchQuery || "").toLowerCase())
   );
 
@@ -91,7 +94,7 @@ function HomepageContent() {
           <p>{program} — {yearLevel} | {studentId}</p>
         </div>
         <div className="welcome-date">
-          <span className="date-icon">📅</span>
+          <span className="date-icon"><Calendar size={24} /></span>
           <span>
             {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
           </span>
@@ -116,7 +119,7 @@ function HomepageContent() {
         {/* --- CALENDAR/SCHEDULE WIDGET --- */}
         <div className="dash-widget" style={{ display: "flex", gap: "20px" }}>
           <div style={{ flex: 1 }}>
-            <h3 style={{ fontSize: "1.15rem", color: "var(--orange-700)", marginBottom: "16px", fontWeight: "700" }}>📅 Today's Schedule</h3>
+            <h3 style={{ fontSize: "1.15rem", color: "var(--orange-700)", marginBottom: "16px", fontWeight: "700", display: "flex", alignItems: "center", gap: "8px" }}><Calendar size={20} /> Today's Schedule</h3>
             {enrollments.length > 0 ? (
               enrollments.map((s) => {
                 const dayMap = { 0: "Sun", 1: "Mon", 2: "Tue", 3: "Wed", 4: "Thu", 5: "Fri", 6: "Sat" };
@@ -125,7 +128,7 @@ function HomepageContent() {
                 if (!isToday) return null;
                 return (
                   <div key={s.id} className="glance-item">
-                    <strong>{s.subject_code}</strong> — {s.schedule} @ {s.section_name}
+                    <strong>{s.subject_code}</strong> — {s.schedule} {s.instructor ? `(Prof. ${s.instructor})` : ""} @ {s.section_name}
                   </div>
                 );
               })
@@ -153,7 +156,7 @@ function HomepageContent() {
           </button>
         ))}
         <button className="dash-card exit-card" onClick={() => openModal("exit")}>
-          <div className="dash-card-icon exit-icon">🚪</div>
+          <div className="dash-card-icon exit-icon"><LogOut size={24} /></div>
           <span className="dash-card-label">Exit</span>
         </button>
       </section>
@@ -164,7 +167,7 @@ function HomepageContent() {
 
       <section className="quick-glance" style={{ margin: "20px" }}>
         <div className="glance-card">
-          <h3>💰 Balance Overview</h3>
+          <h3 style={{ display: "flex", alignItems: "center", gap: "8px" }}><Wallet size={20} /> Balance Overview</h3>
           <div className="balance-bar-container">
             <div className="balance-bar" style={{ width: `${(SAMPLE_BALANCE.paid / SAMPLE_BALANCE.total) * 100}%` }} />
           </div>
