@@ -1,12 +1,23 @@
-const pool = require('./db');
-
+const mysql = require('mysql2/promise');
+require('dotenv').config();
 async function setupDatabase() {
 
-    // Create database if missing
-    await pool.query(`
-        CREATE DATABASE IF NOT EXISTS enrollment_system_db
-    `);
 
+const tempConnection = await mysql.createConnection({
+        host: process.env.DB_HOST || 'localhost',
+        user: process.env.DB_USER || 'root',
+        password: process.env.DB_PASSWORD || ''
+    });
+
+await tempConnection.query(`CREATE DATABASE IF NOT EXISTS enrollment_system_db`);
+    
+    // 3. Terminate the temporary connection
+    await tempConnection.end();
+
+    // 4. Import the standard pool only AFTER the database is guaranteed to exist
+const pool = require('./db');
+    // Create database if missing
+ 
     // Select database
     await pool.query(`USE enrollment_system_db`);
 

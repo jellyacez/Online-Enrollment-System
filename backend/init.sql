@@ -106,6 +106,20 @@ INSERT INTO
     )
 VALUES (
         'System Admin',
+        'aladin@1.com',
+        '12345678',
+        'admin'
+    );
+
+INSERT INTO
+    users (
+        full_name,
+        email,
+        password,
+        role
+    )
+VALUES (
+        'System Admin',
         'admin1@example.com',
         '1234',
         'admin'

@@ -11,6 +11,7 @@ app.use(express.json());
 
 const setupDatabase = require('./config/setup');
 
+
 setupDatabase()
     .then(() => {
         console.log('Server ready');
