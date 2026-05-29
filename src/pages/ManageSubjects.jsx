@@ -15,11 +15,15 @@ export default function ManageSubjects() {
   const user = JSON.parse(localStorage.getItem("user")) || { id: 1 }; // Default to 1 if not logged in
 
   useEffect(() => {
-    fetchData();
+    fetchData(true);
+    const interval = setInterval(() => {
+      fetchData(false);
+    }, 10000);
+    return () => clearInterval(interval);
   }, []);
 
-  const fetchData = async () => {
-    setLoading(true);
+  const fetchData = async (showLoading = false) => {
+    if (showLoading) setLoading(true);
     try {
       /** Fetch all available sections and subject details */
       const sectionsRes = await fetch("/api/sections");
@@ -30,7 +34,7 @@ export default function ManageSubjects() {
       const enrollmentsData = await enrollmentsRes.json();
 
       /** Filter enrollments for current user */
-      const myEnrollments = enrollmentsData.filter(e => e.student_name === user.full_name || true); // Default true for dummy
+      const myEnrollments = enrollmentsData.filter(e => e.student_email === user.email);
 
       /** Map enrolled data to frontend structure */
       const enrolledFormat = myEnrollments.map(e => ({
@@ -62,7 +66,9 @@ export default function ManageSubjects() {
               sections: []
             };
           }
-          subjectsMap[s.subject_id].sections.push(s);
+          if (s.section_id) {
+            subjectsMap[s.subject_id].sections.push(s);
+          }
         }
       });
 
@@ -70,19 +76,21 @@ export default function ManageSubjects() {
 
       setAvailableSubjects(availableFormat);
       
-      /** Set default section selections */
-      const initSelected = {};
-      availableFormat.forEach(sub => {
-        if (sub.sections.length > 0) {
-          initSelected[sub.id] = sub.sections[0].section_id.toString();
-        }
+      /** Set default section selections carefully to avoid overwriting user selection */
+      setSelectedSection(prev => {
+        const nextSelected = { ...prev };
+        availableFormat.forEach(sub => {
+          if (sub.sections.length > 0 && !nextSelected[sub.id]) {
+            nextSelected[sub.id] = sub.sections[0].section_id.toString();
+          }
+        });
+        return nextSelected;
       });
-      setSelectedSection(initSelected);
 
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 
@@ -246,28 +254,34 @@ export default function ManageSubjects() {
                           <td className="textPrimary">{subject.code}</td>
                           <td>{subject.name}</td>
                           <td>
-                            <select
-                              className="sectionDropdown"
-                              value={selectedSection[subject.id] || ""}
-                              onChange={(e) =>
-                                setSelectedSection({
-                                  ...selectedSection,
-                                  [subject.id]: e.target.value,
-                                })
-                              }
-                            >
-                              {subject.sections.map(sec => (
-                                <option key={sec.section_id} value={sec.section_id} disabled={sec.enrolled_slots >= sec.max_slots}>
-                                  {sec.section_name} ({sec.enrolled_slots}/{sec.max_slots} slots)
-                                </option>
-                              ))}
-                            </select>
+                            {subject.sections.length > 0 ? (
+                              <select
+                                className="sectionDropdown"
+                                value={selectedSection[subject.id] || ""}
+                                onChange={(e) =>
+                                  setSelectedSection({
+                                    ...selectedSection,
+                                    [subject.id]: e.target.value,
+                                  })
+                                }
+                              >
+                                {subject.sections.map(sec => (
+                                  <option key={sec.section_id} value={sec.section_id} disabled={sec.enrolled_slots >= sec.max_slots}>
+                                    {sec.section_name} ({sec.enrolled_slots}/{sec.max_slots} slots)
+                                  </option>
+                                ))}
+                              </select>
+                            ) : (
+                              <span style={{color: '#999', fontStyle: 'italic', fontSize: '0.9em'}}>No sections available</span>
+                            )}
                           </td>
                           <td>{subject.unit}</td>
                           <td className="actionButtons">
                             <button
                               className="addButton"
                               onClick={() => handleAddSubject(subject)}
+                              disabled={subject.sections.length === 0}
+                              style={{ opacity: subject.sections.length === 0 ? 0.5 : 1, cursor: subject.sections.length === 0 ? 'not-allowed' : 'pointer' }}
                             >
                               Add
                             </button>

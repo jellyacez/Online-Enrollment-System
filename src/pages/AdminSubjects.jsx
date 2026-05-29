@@ -16,6 +16,15 @@ export default function AdminSubjects() {
     units: 3,
   });
 
+  const [showSectionModal, setShowSectionModal] = useState(false);
+  const [sectionFormData, setSectionFormData] = useState({
+    subject_id: "",
+    name: "",
+    schedule: "",
+    max_slots: 40,
+    instructor: "",
+  });
+
   useEffect(() => {
     fetchSubjects();
   }, []);
@@ -83,6 +92,37 @@ export default function AdminSubjects() {
     }
   };
 
+  const openSectionModal = (subject) => {
+    setSectionFormData({
+      subject_id: subject.id,
+      name: "",
+      schedule: "",
+      max_slots: 40,
+      instructor: "",
+    });
+    setShowSectionModal(true);
+  };
+
+  const handleSectionSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/sections", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(sectionFormData),
+      });
+      if (res.ok) {
+        setShowSectionModal(false);
+        alert("Section created successfully!");
+      } else {
+        const errData = await res.json();
+        alert(`Error: ${errData.message}`);
+      }
+    } catch (err) {
+      console.error("Error creating section:", err);
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="user-management-container">
@@ -132,6 +172,14 @@ export default function AdminSubjects() {
                           className="action-btns"
                           style={{ justifyContent: "flex-end" }}
                         >
+                          <button
+                            className="icon-btn edit"
+                            onClick={() => openSectionModal(subject)}
+                            title="Add Section"
+                            style={{ background: 'var(--green-100)', color: 'var(--green-700)' }}
+                          >
+                            <Plus size={16} />
+                          </button>
                           <button
                             className="icon-btn edit"
                             onClick={() => openEditModal(subject)}
@@ -220,6 +268,78 @@ export default function AdminSubjects() {
                 </div>
                 <button type="submit" className="submit-btn">
                   {editMode ? "Save Changes" : "Create Subject"}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Section Modal */}
+        {showSectionModal && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <div className="modal-header">
+                <h2>Add Section</h2>
+                <button
+                  className="close-btn"
+                  onClick={() => setShowSectionModal(false)}
+                >
+                  <X />
+                </button>
+              </div>
+              <form onSubmit={handleSectionSubmit} className="modal-form">
+                <div className="form-group">
+                  <label>Section Name</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Info 3-C"
+                    value={sectionFormData.name}
+                    onChange={(e) =>
+                      setSectionFormData({ ...sectionFormData, name: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Schedule</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Mon/Wed 8:00 AM - 9:30 AM"
+                    value={sectionFormData.schedule}
+                    onChange={(e) =>
+                      setSectionFormData({ ...sectionFormData, schedule: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Instructor</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Mr. Smith"
+                    value={sectionFormData.instructor}
+                    onChange={(e) =>
+                      setSectionFormData({ ...sectionFormData, instructor: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Max Slots</label>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    value={sectionFormData.max_slots}
+                    onChange={(e) =>
+                      setSectionFormData({
+                        ...sectionFormData,
+                        max_slots: parseInt(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+                <button type="submit" className="submit-btn" style={{ background: 'var(--green-500)' }}>
+                  Create Section
                 </button>
               </form>
             </div>
