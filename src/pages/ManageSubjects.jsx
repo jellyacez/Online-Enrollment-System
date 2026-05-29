@@ -25,6 +25,14 @@ export default function ManageSubjects() {
   const fetchData = async (showLoading = false) => {
     if (showLoading) setLoading(true);
     try {
+      /** Fetch User Profile to get their program */
+      const userRes = await fetch(`/api/users/${user.id}`);
+      let userProfile = {};
+      if (userRes.ok) {
+        userProfile = await userRes.json();
+      }
+      const myProgram = userProfile.program || "";
+
       /** Fetch all available sections and subject details */
       const sectionsRes = await fetch("/api/sections");
       const sectionsData = await sectionsRes.json();
@@ -56,13 +64,18 @@ export default function ManageSubjects() {
       /** Aggregate sections under their respective subjects */
       const subjectsMap = {};
       sectionsData.forEach(s => {
-        if (!enrolledSubjectCodes.includes(s.subject_code)) {
+        // Filter based on subject type and program alignment
+        const isGeneral = s.subject_type === 'general' || !s.subject_type;
+        const isAlignedMajor = s.subject_type === 'major' && s.aligned_program === myProgram;
+
+        if ((isGeneral || isAlignedMajor) && !enrolledSubjectCodes.includes(s.subject_code)) {
           if (!subjectsMap[s.subject_id]) {
             subjectsMap[s.subject_id] = {
               id: s.subject_id,
               code: s.subject_code,
               name: s.description,
               unit: s.units,
+              type: s.subject_type || 'general',
               sections: []
             };
           }
@@ -252,7 +265,12 @@ export default function ManageSubjects() {
                       {availableSubjects.map((subject) => (
                         <tr key={subject.id}>
                           <td className="textPrimary">{subject.code}</td>
-                          <td>{subject.name}</td>
+                          <td>
+                            {subject.name}
+                            {subject.type === 'major' && (
+                              <span style={{ marginLeft: '8px', padding: '2px 6px', fontSize: '0.7em', backgroundColor: 'var(--orange-100)', color: 'var(--orange-800)', borderRadius: '10px' }}>MAJOR</span>
+                            )}
+                          </td>
                           <td>
                             {subject.sections.length > 0 ? (
                               <select

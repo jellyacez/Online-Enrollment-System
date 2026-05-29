@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
     try {
         const query = `
             SELECT s.id as section_id, s.name as section_name, s.instructor, s.schedule, s.max_slots, s.enrolled_slots,
-                   sub.id as subject_id, sub.subject_code, sub.description, sub.units
+                   sub.id as subject_id, sub.subject_code, sub.description, sub.units, sub.subject_type, sub.aligned_program
             FROM subjects sub
             LEFT JOIN sections s ON sub.id = s.subject_id
         `;

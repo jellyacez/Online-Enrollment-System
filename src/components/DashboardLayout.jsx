@@ -181,6 +181,72 @@ function ProfileModalContent({ closeModal, user }) {
   );
 }
 
+function CalendarModalContent({ closeModal, user, viewMode, setViewMode }) {
+  const [scheduleData, setScheduleData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/enrollments")
+      .then(res => res.json())
+      .then(data => {
+        const myEnrolled = data.filter(e => e.student_email === user.email && e.status === "enrolled");
+        const formattedSchedule = myEnrolled.map(e => {
+          let day = "TBA";
+          let time = "TBA";
+          if (e.schedule && e.schedule !== "TBA") {
+            const parts = e.schedule.split(" ");
+            day = parts[0];
+            time = parts.slice(1).join(" ");
+          }
+          return {
+            code: e.subject_code,
+            desc: e.subject_description,
+            day: day,
+            time: time,
+            room: e.section_name || "TBA"
+          };
+        });
+        setScheduleData(formattedSchedule);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [user.email]);
+
+  if (loading) return <div className="modal-body">Loading...</div>;
+
+  return (
+    <>
+      <div className="modal-header"><h2>📅 Calendar & Schedule</h2><button onClick={closeModal}>✕</button></div>
+      <div className="modal-body">
+        <CalendarWidget />
+        <div className="section-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px", marginBottom: "10px" }}>
+          <h4 className="section-title">Class Schedule</h4>
+          <button className="changeButton" onClick={() => setViewMode(viewMode === "list" ? "grid" : "list")}>
+            {viewMode === "list" ? "🖼️ View Visual Timetable" : "📝 View List"}
+          </button>
+        </div>
+        {scheduleData.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "20px", color: "var(--gray-500)" }}>
+            No enrolled classes yet.
+          </div>
+        ) : viewMode === "list" ? (
+          <table className="grades-table">
+            <thead><tr><th>Code</th><th>Subject</th><th>Day</th><th>Time</th><th>Section</th></tr></thead>
+            <tbody>
+              {scheduleData.map((s, idx) => (
+                <tr key={idx}><td><strong>{s.code}</strong></td><td>{s.desc}</td><td>{s.day}</td><td>{s.time}</td><td>{s.room}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (<div className="timetable-container"><ClassSchedule scheduleData={scheduleData} /></div>)}
+      </div>
+    </>
+  );
+}
+
 function EnrollmentModalContent({ closeModal, user }) {
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -455,26 +521,7 @@ export default function DashboardLayout({ children }) {
       {/* CALENDAR MODAL */}
       {activeModal === "calendar" && (
         <div className="modal">
-          <div className="modal-header"><h2>📅 Calendar & Schedule</h2><button onClick={closeModal}>✕</button></div>
-          <div className="modal-body">
-            <CalendarWidget />
-            <div className="section-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px", marginBottom: "10px" }}>
-              <h4 className="section-title">Class Schedule</h4>
-              <button className="changeButton" onClick={() => setViewMode(viewMode === "list" ? "grid" : "list")}>
-                {viewMode === "list" ? "🖼️ View Visual Timetable" : "📝 View List"}
-              </button>
-            </div>
-            {viewMode === "list" ? (
-              <table className="grades-table">
-                <thead><tr><th>Code</th><th>Subject</th><th>Day</th><th>Time</th><th>Room</th></tr></thead>
-                <tbody>
-                  {SAMPLE_SCHEDULE.map((s) => (
-                    <tr key={s.code}><td><strong>{s.code}</strong></td><td>{s.desc}</td><td>{s.day}</td><td>{s.time}</td><td>{s.room}</td></tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (<div className="timetable-container"><ClassSchedule scheduleData={SAMPLE_SCHEDULE} /></div>)}
-          </div>
+          <CalendarModalContent closeModal={closeModal} user={user} viewMode={viewMode} setViewMode={setViewMode} />
         </div>
       )}
 

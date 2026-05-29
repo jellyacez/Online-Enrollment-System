@@ -145,6 +145,12 @@ function HomepageContent() {
       color: "#FF7A1A",
     },
     {
+      key: "calendar",
+      icon: <Calendar size={24} color="white" />,
+      label: "Calendar",
+      color: "#D46A00",
+    },
+    {
       key: "balance",
       icon: <Wallet size={24} color="white" />,
       label: "Balance",

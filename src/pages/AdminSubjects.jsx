@@ -14,6 +14,8 @@ export default function AdminSubjects() {
     subject_code: "",
     description: "",
     units: 3,
+    subject_type: "general",
+    aligned_program: "",
   });
 
   const [showSectionModal, setShowSectionModal] = useState(false);
@@ -55,7 +57,7 @@ export default function AdminSubjects() {
 
   const openCreateModal = () => {
     setEditMode(false);
-    setFormData({ id: "", subject_code: "", description: "", units: 3 });
+    setFormData({ id: "", subject_code: "", description: "", units: 3, subject_type: "general", aligned_program: "" });
     setShowModal(true);
   };
 
@@ -66,6 +68,8 @@ export default function AdminSubjects() {
       subject_code: subject.subject_code,
       description: subject.description,
       units: subject.units,
+      subject_type: subject.subject_type || "general",
+      aligned_program: subject.aligned_program || "",
     });
     setShowModal(true);
   };
@@ -149,6 +153,8 @@ export default function AdminSubjects() {
                 <tr>
                   <th>Subject Code</th>
                   <th>Description</th>
+                  <th>Type</th>
+                  <th>Aligned Program</th>
                   <th>Units</th>
                   <th style={{ textAlign: "right" }}>Actions</th>
                 </tr>
@@ -166,6 +172,18 @@ export default function AdminSubjects() {
                         {subject.subject_code}
                       </td>
                       <td>{subject.description}</td>
+                      <td>
+                        <span style={{ 
+                          padding: "4px 8px", 
+                          borderRadius: "12px", 
+                          fontSize: "0.85em",
+                          backgroundColor: subject.subject_type === 'major' ? 'var(--orange-100)' : '#e2e3e5',
+                          color: subject.subject_type === 'major' ? 'var(--orange-800)' : '#383d41'
+                        }}>
+                          {subject.subject_type === 'major' ? 'Major' : 'General'}
+                        </span>
+                      </td>
+                      <td>{subject.aligned_program || "-"}</td>
                       <td>{subject.units}</td>
                       <td>
                         <div
@@ -266,6 +284,42 @@ export default function AdminSubjects() {
                     }
                   />
                 </div>
+                <div className="form-group">
+                  <label>Subject Type</label>
+                  <select
+                    value={formData.subject_type}
+                    onChange={(e) =>
+                      setFormData({ ...formData, subject_type: e.target.value })
+                    }
+                    style={{ padding: "10px", borderRadius: "6px", border: "1px solid #ccc", width: "100%" }}
+                  >
+                    <option value="general">General (All Programs)</option>
+                    <option value="major">Major (Specific Program)</option>
+                  </select>
+                </div>
+                {formData.subject_type === "major" && (
+                  <div className="form-group">
+                    <label>Aligned Program</label>
+                    <select
+                      required
+                      value={formData.aligned_program}
+                      onChange={(e) =>
+                        setFormData({ ...formData, aligned_program: e.target.value })
+                      }
+                      style={{ padding: "10px", borderRadius: "6px", border: "1px solid #ccc", width: "100%" }}
+                    >
+                      <option value="">Select a course</option>
+                      <option value="BS Information Technology">BS Information Technology</option>
+                      <option value="BS Computer Science">BS Computer Science</option>
+                      <option value="BS Information Systems">BS Information Systems</option>
+                      <option value="BS Business Administration">BS Business Administration</option>
+                      <option value="BS Accountancy">BS Accountancy</option>
+                      <option value="BS Nursing">BS Nursing</option>
+                      <option value="BS Civil Engineering">BS Civil Engineering</option>
+                      <option value="BS Mechanical Engineering">BS Mechanical Engineering</option>
+                    </select>
+                  </div>
+                )}
                 <button type="submit" className="submit-btn">
                   {editMode ? "Save Changes" : "Create Subject"}
                 </button>

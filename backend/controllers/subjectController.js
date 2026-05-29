@@ -26,17 +26,20 @@ exports.getSubjectById = async (req, res) => {
 };
 
 // Create a new subject
-exports.createSubject = async (req, res) => {
+    exports.createSubject = async (req, res) => {
     try {
-        const { subject_code, description, units } = req.body;
+        const { subject_code, description, units, subject_type, aligned_program } = req.body;
         
         if (!subject_code || !units) {
             return res.status(400).json({ message: 'Subject code and units are required' });
         }
 
+        const type = subject_type || 'general';
+        const program = (type === 'major' && aligned_program) ? aligned_program : null;
+
         const [result] = await pool.query(
-            'INSERT INTO subjects (subject_code, description, units) VALUES (?, ?, ?)',
-            [subject_code, description, units]
+            'INSERT INTO subjects (subject_code, description, units, subject_type, aligned_program) VALUES (?, ?, ?, ?, ?)',
+            [subject_code, description, units, type, program]
         );
         
         res.status(201).json({ 
@@ -52,10 +55,14 @@ exports.createSubject = async (req, res) => {
 // Update a subject
 exports.updateSubject = async (req, res) => {
     try {
-        const { subject_code, description, units } = req.body;
+        const { subject_code, description, units, subject_type, aligned_program } = req.body;
+        
+        const type = subject_type || 'general';
+        const program = (type === 'major' && aligned_program) ? aligned_program : null;
+
         const [result] = await pool.query(
-            'UPDATE subjects SET subject_code = ?, description = ?, units = ? WHERE id = ?',
-            [subject_code, description, units, req.params.id]
+            'UPDATE subjects SET subject_code = ?, description = ?, units = ?, subject_type = ?, aligned_program = ? WHERE id = ?',
+            [subject_code, description, units, type, program, req.params.id]
         );
 
         if (result.affectedRows === 0) {
