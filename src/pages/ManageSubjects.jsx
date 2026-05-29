@@ -11,7 +11,7 @@ export default function ManageSubjects() {
   const [availableSubjects, setAvailableSubjects] = useState([]);
   const [selectedSection, setSelectedSection] = useState({});
 
-  // Get user from localStorage
+  /** Retrieve authenticated user session */
   const user = JSON.parse(localStorage.getItem("user")) || { id: 1 }; // Default to 1 if not logged in
 
   useEffect(() => {
@@ -21,18 +21,18 @@ export default function ManageSubjects() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // Fetch sections (contains subject info too)
+      /** Fetch all available sections and subject details */
       const sectionsRes = await fetch("/api/sections");
       const sectionsData = await sectionsRes.json();
 
-      // Fetch enrollments
+      /** Fetch student enrollment records */
       const enrollmentsRes = await fetch("/api/enrollments");
       const enrollmentsData = await enrollmentsRes.json();
 
-      // Filter my enrollments
+      /** Filter enrollments for current user */
       const myEnrollments = enrollmentsData.filter(e => e.student_name === user.full_name || true); // Default true for dummy
 
-      // Format enrolled subjects
+      /** Map enrolled data to frontend structure */
       const enrolledFormat = myEnrollments.map(e => ({
         id: e.id,
         subject_id: e.subject_id,
@@ -46,10 +46,10 @@ export default function ManageSubjects() {
 
       setMySubjects(enrolledFormat);
 
-      // Determine available subjects (not enrolled)
+      /** Calculate subjects available for enrollment */
       const enrolledSubjectCodes = enrolledFormat.map(s => s.code);
       
-      // Group sections by subject
+      /** Aggregate sections under their respective subjects */
       const subjectsMap = {};
       sectionsData.forEach(s => {
         if (!enrolledSubjectCodes.includes(s.subject_code)) {
@@ -70,7 +70,7 @@ export default function ManageSubjects() {
 
       setAvailableSubjects(availableFormat);
       
-      // Initialize selected sections with the first available section
+      /** Set default section selections */
       const initSelected = {};
       availableFormat.forEach(sub => {
         if (sub.sections.length > 0) {
@@ -133,7 +133,7 @@ export default function ManageSubjects() {
     }
   };
 
-  // UI States for Modals
+  /* Modal UI State Management */
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [subjectoEdit, setSubjectToEdit] = useState(null);
   const [newSection, setNewSection] = useState("");
@@ -282,7 +282,7 @@ export default function ManageSubjects() {
           </>
         )}
 
-        {/* Drop Execution Modal */}
+        {/* Subject Drop Confirmation Modal */}
         {isDropModalOpen && subjectToDrop && (
           <div className="modalOverlay">
             <div className="modalContent">

@@ -14,7 +14,7 @@ import DashboardLayout, {
 } from "../components/DashboardLayout";
 import { SAMPLE_BALANCE, SAMPLE_NOTIFICATIONS } from "../utils/dummyData";
 
-// Simplified version of the calendar for the quick glance
+/** Mini calendar component for dashboard glance view */
 function CalendarWidgetMini() {
   const today = new Date();
   const year = today.getFullYear();
@@ -78,7 +78,7 @@ function HomepageContent() {
     fetch("/api/enrollments")
       .then((res) => res.json())
       .then((data) => {
-        // Filter strictly by the current user's email to ensure they only see their own subjects
+        /** Filter enrollment records by authenticated user session */
         const myEnrolled = data.filter(
           (e) => e.student_email === user.email && e.status === "enrolled",
         );
@@ -162,7 +162,7 @@ function HomepageContent() {
       </section>
 
       <section className="dashboard-widgets">
-        {/* --- PROFILE WIDGET --- */}
+        {/* Student Profile Overview Component */}
         <div
           className="dash-widget"
           style={{ display: "flex", alignItems: "center", gap: "20px" }}
@@ -201,7 +201,7 @@ function HomepageContent() {
           </button>
         </div>
 
-        {/* --- CALENDAR/SCHEDULE WIDGET --- */}
+        {/* Today's Schedule Overview Component */}
         <div className="dash-widget" style={{ display: "flex", gap: "20px" }}>
           <div style={{ flex: 1 }}>
             <h3
@@ -296,7 +296,7 @@ function HomepageContent() {
       </section>
 
       <section className="dashboard-grid" style={{ margin: "20px" }}>
-        {/* --- ICON CARDS --- */}
+        {/* Interactive Dashboard Navigation Modules */}
         {filteredCards.map((card) => (
           <button
             key={card.key}

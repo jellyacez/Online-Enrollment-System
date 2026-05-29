@@ -42,15 +42,15 @@ ChartJS.register(
 export default function AdminDashboard() {
   const navigate = useNavigate();
 
-  // Helper to generate the last 7 days chronologically
+  /** Generates array of the last 7 days for trend charts. */
   const getLast7Days = () => {
     const days = [];
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       days.push({
-        name: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }), // e.g. "May 28"
-        fullDate: d.toDateString(), // for easy matching
+        name: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        fullDate: d.toDateString(),
         enrollments: 0,
       });
     }
@@ -68,18 +68,17 @@ export default function AdminDashboard() {
     recentEnrollees: [],
     recentActivities: [],
     programDistribution: [],
-    // Default empty chart structure using chronological 7 days
     enrollmentTrends: getLast7Days(),
   });
 
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        // 1. Fetch standard dashboard stats
+        // Fetch aggregate statistics
         const statsRes = await fetch("/api/admin/stats");
         const statsData = statsRes.ok ? await statsRes.json() : {};
 
-        // 2. Fetch REAL enrollments to get Recent students, Pending count, AND Chart Data
+        // Fetch recent enrollments for pending requests and charts
         let realRecent = [];
         let realPending = 0;
         let calculatedTrends = getLast7Days();
@@ -94,7 +93,7 @@ export default function AdminDashboard() {
               (e) => e.status === "pending",
             ).length;
 
-            // Get the 5 most recent real enrollees
+            // Retrieve top 5 recent enrollees
             realRecent = [...enrollData]
               .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
               .slice(0, 5)
@@ -105,7 +104,7 @@ export default function AdminDashboard() {
                 date: new Date(e.created_at).toLocaleDateString(),
               }));
 
-            // Dynamically calculate Chart Data chronologically for the last 7 days
+            // Map enrollments to chronological trend data
             enrollData.forEach((enrollment) => {
               if (enrollment.created_at) {
                 const enrollDate = new Date(
@@ -124,7 +123,7 @@ export default function AdminDashboard() {
           console.error("Could not fetch real enrollments", e);
         }
 
-        // 3. Fetch Real Audit Logs count
+        // Fetch system audit logs
         let realAuditLogs = 0;
         try {
           const auditRes = await fetch("/api/audit-logs/count");
@@ -134,7 +133,7 @@ export default function AdminDashboard() {
           }
         } catch (e) {}
 
-        // 4. NEW: Fetch Real Active Users count
+        // Fetch active users metric
         let realActiveUsers = 0;
         try {
           const usersRes = await fetch("/api/active-users/count");
@@ -144,17 +143,17 @@ export default function AdminDashboard() {
           }
         } catch (e) {}
 
-        // 6. Fetch Recent Activities (Audit logs)
+        // Fetch latest system activities
         let realActivities = [];
         try {
           const actRes = await fetch("/api/audit");
           if (actRes.ok) {
             const actData = await actRes.json();
-            realActivities = actData.slice(0, 5); // Grab top 5 most recent
+            realActivities = actData.slice(0, 5);
           }
         } catch (e) {}
 
-        // 5. Update the state securely with all our real data
+        // Update component state with fetched data
         setStats((prev) => ({
           ...prev,
           totalStudents: statsData.totalStudents ?? prev.totalStudents,
@@ -168,7 +167,7 @@ export default function AdminDashboard() {
               }))
             : prev.programDistribution,
 
-          activeUsers: realActiveUsers, // <--- Now uses the real database count!
+          activeUsers: realActiveUsers,
           pendingEnrollments: realPending,
           recentEnrollees: realRecent,
           recentActivities: realActivities,
@@ -225,7 +224,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* --- STATS GRID --- */}
+        {/* Statistics Overview */}
         <div className="stats-grid">
           <div className="stat-card">
             <div className="icon-box" style={{ background: "#e0f2fe" }}>
@@ -298,7 +297,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* --- MAIN CONTENT GRID (Chart & Table) --- */}
+        {/* Main Dashboard Content */}
         <div className="dashboard-content">
           {/* Time Series Chart */}
           <div className="chart-section">
@@ -313,7 +312,7 @@ export default function AdminDashboard() {
               />
               Enrollment Overview
             </h2>
-            {/* Enrollment Trends Line Chart (Chart.js) */}
+            {/* Enrollment Trends Chart */}
             <div
               style={{ width: "100%", height: "350px", position: "relative" }}
             >

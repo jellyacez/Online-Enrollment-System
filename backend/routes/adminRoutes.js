@@ -54,38 +54,7 @@ router.get("/stats", async (req, res) => {
 });
 
 // @route   GET api/admin/users
-// @desc    Get all users COmmented uz i might break something
-// router.get('/users', async (req, res) => {
-//     //added search and page
-//      const {role,search,page= 1, limit = 10} = req.query;
-//         const offset = (page - 1) * limit;
 
-//         let query = "SELECT id, full_name, email, role, created_at FROM users WHERE 1=1";
-//         const params = []
-
-//         if (role){
-//             query += " AND role = ?";
-//             params.push(role);
-//         }
-
-//         if(search){
-//             query += " AND full_name LIKE ? OR email LIKE ?";
-//             params.push(`%${search}$%`,`%${search}%`);
-//         }
-
-//         query += " ORDER BY created_at DESC LIMIT ? OFFSET ? "
-//         params.push(parseInt(limit), parseInt(offset));
-
-//     try {
-//         const [users] = await pool.query(query,params);
-//         res.json(users);
-//         // const [users] = await pool.query("SELECT id, full_name, email, role, created_at FROM users ORDER BY created_at DESC");
-//         // res.json(users);
-//     } catch (error) {
-//         console.error('Error fetching users:', error);
-//         res.status(500).json({ message: 'Server error while fetching users' });
-//     }
-// });
 
 // @route   GET api/admin/users
 // @desc    Get all users with pagination and search
@@ -98,7 +67,7 @@ router.get("/users", async (req, res) => {
     const offsetInt = (parseInt(page) - 1) * limitInt;
     const searchTerm = `%${search}%`;
 
-    // 1. Get total count for frontend pagination calculation
+    /** Calculate total records for frontend pagination component */
     const countQuery =
       "SELECT COUNT(*) as total FROM users WHERE full_name LIKE ? OR email LIKE ?";
     const [countResult] = await pool.query(countQuery, [
@@ -106,7 +75,7 @@ router.get("/users", async (req, res) => {
       searchTerm,
     ]);
 
-    // 2. Get the paginated data
+    /** Retrieve paginated user data */
     const dataQuery = `
             SELECT id, full_name, email, role, created_at 
             FROM users 
@@ -121,7 +90,7 @@ router.get("/users", async (req, res) => {
       offsetInt,
     ]);
 
-    // 3. Return both the array of users and the total count
+    /** Send payload containing users array and total count */
     res.json({
       users: users,
       total: countResult[0].total,
