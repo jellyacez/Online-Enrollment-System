@@ -19,7 +19,7 @@ import pic3 from "../assets/pic3.svg";
 
 const AboutPage = () => {
   const navigate = useNavigate();
-  const studentPortal = (e) => {
+  const studentPortal = () => {
     navigate("/login");
   };
 

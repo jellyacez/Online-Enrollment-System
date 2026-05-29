@@ -316,9 +316,18 @@ export default function DashboardLayout({ children }) {
   const [viewMode, setViewMode] = useState("list");
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("user")) || { full_name: "Kevin Aceroano", id: "2024-00123", role: "student" };
-  const studentName = user.full_name;
-  const studentId = user.id;
+  const user = JSON.parse(localStorage.getItem("user"));
+  
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  if (!user) return null;
+
+  const studentName = user.full_name || "Unknown";
+  const studentId = user.id || "N/A";
   const program = "BS Information Technology";
   const yearLevel = "2nd Year";
 

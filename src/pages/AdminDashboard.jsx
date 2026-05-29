@@ -131,7 +131,7 @@ export default function AdminDashboard() {
             const auditData = await auditRes.json();
             realAuditLogs = auditData.total || 0;
           }
-        } catch (e) {}
+        } catch {}
 
         // Fetch active users metric
         let realActiveUsers = 0;
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
             const usersData = await usersRes.json();
             realActiveUsers = usersData.total || 0;
           }
-        } catch (e) {}
+        } catch {}
 
         // Fetch latest system activities
         let realActivities = [];
@@ -151,7 +151,7 @@ export default function AdminDashboard() {
             const actData = await actRes.json();
             realActivities = actData.slice(0, 5);
           }
-        } catch (e) {}
+        } catch {}
 
         // Update component state with fetched data
         setStats((prev) => ({

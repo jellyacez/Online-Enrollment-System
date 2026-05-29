@@ -63,12 +63,16 @@ export default function Homepage() {
 function HomepageContent() {
   const { openModal, searchQuery } = useContext(DashboardContext);
 
-  const user = JSON.parse(localStorage.getItem("user")) || {
-    full_name: "Kevin Aceroano",
-    id: "2024-00123",
-  };
-  const studentName = user.full_name;
-  const studentId = user.id;
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  
+  useEffect(() => {
+    if (!user.id) {
+      window.location.href = "/login";
+    }
+  }, [user.id]);
+
+  const studentName = user.full_name || "Unknown";
+  const studentId = user.id || "N/A";
   
   const [profile, setProfile] = useState({
     program: "Loading...",
@@ -78,7 +82,7 @@ function HomepageContent() {
 
   useEffect(() => {
     // Fetch User Profile
-    if (user.id && user.id !== "2024-00123") {
+    if (user.id) {
       fetch(`/api/users/${user.id}`)
         .then((res) => res.json())
         .then((data) => {
@@ -95,11 +99,6 @@ function HomepageContent() {
           }
         })
         .catch((err) => console.error("Failed to fetch profile", err));
-    } else {
-      setProfile({
-        program: "BS Information Technology",
-        current_level: "2nd Year"
-      });
     }
 
     // Fetch Enrollments
@@ -114,6 +113,8 @@ function HomepageContent() {
       })
       .catch((err) => console.error("Failed to fetch enrollments", err));
   }, [user.email, user.id]);
+
+  if (!user.id) return null;
 
   const program = profile.program;
   const yearLevel = profile.current_level;

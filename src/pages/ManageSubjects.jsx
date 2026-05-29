@@ -11,8 +11,13 @@ export default function ManageSubjects() {
   const [availableSubjects, setAvailableSubjects] = useState([]);
   const [selectedSection, setSelectedSection] = useState({});
 
-  /** Retrieve authenticated user session */
-  const user = JSON.parse(localStorage.getItem("user")) || { id: 1 }; // Default to 1 if not logged in
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  
+  useEffect(() => {
+    if (!user.id) {
+      window.location.href = "/login";
+    }
+  }, [user.id]);
 
   useEffect(() => {
     fetchData(true);
@@ -20,7 +25,8 @@ export default function ManageSubjects() {
       fetchData(false);
     }, 10000);
     return () => clearInterval(interval);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user.id, user.email]);
 
   const fetchData = async (showLoading = false) => {
     if (showLoading) setLoading(true);
@@ -155,10 +161,6 @@ export default function ManageSubjects() {
   };
 
   /* Modal UI State Management */
-  const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
-  const [subjectoEdit, setSubjectToEdit] = useState(null);
-  const [newSection, setNewSection] = useState("");
-
   const [isDropModalOpen, setIsDropModalOpen] = useState(false);
   const [subjectToDrop, setSubjectToDrop] = useState(null);
 
@@ -166,6 +168,8 @@ export default function ManageSubjects() {
     setSubjectToDrop(subject);
     setIsDropModalOpen(true);
   };
+
+  if (!user.id) return null;
 
   return (
     <DashboardLayout>

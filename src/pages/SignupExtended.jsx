@@ -1,19 +1,13 @@
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import Logo from "../assets/UniLogo.png";
-import "../css/login-signup.css";
-
-export default function SignupExtended() {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  // Redirect back if accessed directly without basic info
-  if (!location.state || !location.state.email) {
-    navigate("/login");
-    return null;
-  }
-
-  const { name, email, password, studentType } = location.state;
+  import { useState, useEffect } from "react";
+  import { useNavigate, useLocation } from "react-router-dom";
+  import Logo from "../assets/UniLogo.png";
+  import "../css/login-signup.css";
+  
+  export default function SignupExtended() {
+    const navigate = useNavigate();
+    const location = useLocation();
+  
+    const { name = "", email = "", password = "", studentType = "" } = location.state || {};
 
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
@@ -24,6 +18,16 @@ export default function SignupExtended() {
   const [currentLevel, setCurrentLevel] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!location.state || !location.state.email) {
+      navigate("/login");
+    }
+  }, [location.state, navigate]);
+
+  if (!location.state || !location.state.email) {
+    return null;
+  }
 
   const handleExtendedSignUp = async (e) => {
     e.preventDefault();
@@ -53,7 +57,7 @@ export default function SignupExtended() {
       let data;
       try {
         data = JSON.parse(text);
-      } catch (parseErr) {
+      } catch {
         throw new Error(
           response.ok
             ? "Invalid server response."

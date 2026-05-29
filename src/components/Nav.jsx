@@ -35,6 +35,7 @@ function Navigation() {
   };
   
   useEffect(() => {
+    // eslint-disable-next-line
     setIsOpen(false);
 
     setTimeout(() => {

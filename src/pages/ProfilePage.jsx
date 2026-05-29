@@ -3,11 +3,14 @@ import DashboardLayout from "../components/DashboardLayout";
 import "../css/Homepage.css";
 
 export default function ProfilePage() {
-  const user = JSON.parse(localStorage.getItem("user")) || {
-    id: 1,
-    full_name: "User",
-  };
+  const user = JSON.parse(localStorage.getItem("user")) || {};
   const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    if (!user.id) {
+      window.location.href = "/login";
+    }
+  }, [user.id]);
 
   // State Tracking
   const [editingSection, setEditingSection] = useState(null);
@@ -21,14 +24,12 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
-  // Refs for hidden file inputs
-  const profilePicRef = useRef(null);
-  const signatureRef = useRef(null);
   const docRefs = {
     birth_cert: useRef(null),
     form_138: useRef(null),
     good_moral: useRef(null),
   };
+
 
   useEffect(() => {
     fetch(`/api/users/${user.id}`)
@@ -61,7 +62,7 @@ export default function ProfilePage() {
         });
         setLoading(false);
       });
-  }, [user.id]);
+  }, [user.id, user.full_name]);
 
   // --- Handlers ---
   const handleFileUpload = (e, field) => {
@@ -206,6 +207,8 @@ export default function ProfilePage() {
     border: "1px solid #f0f0f0",
     marginBottom: "20px",
   };
+
+  if (!user.id) return null;
 
   return (
     <DashboardLayout>
