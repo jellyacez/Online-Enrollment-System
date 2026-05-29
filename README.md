@@ -15,6 +15,8 @@ This project uses a MySQL database. To initialize it with the required tables an
 2. Run the provided `backend/init.sql` script to create the `enrollment_system_db` database.
 3. Alternatively, you can open a terminal in the `backend` folder and run `node run-init.js`.
 
+> **Note on Database Credentials:** The backend connects to the database using the credentials stored in `backend/.env`. By default, it expects a local MySQL server with the username `root` and password `root` . If your local MySQL setup uses a different password or username, please update the `backend/.env` file before running the server.
+
 ## 2. Running the Backend (API Server)
 
 The backend is built with Node.js and Express.
