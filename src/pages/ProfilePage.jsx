@@ -77,14 +77,16 @@ export default function ProfilePage() {
 
   const handleSave = async (section) => {
     if (section === "personal") {
-      if (!formData.profile_picture)
-        return alert("A profile picture is required.");
       if (
-        !formData.program?.trim() ||
         !formData.phone?.trim() ||
         !formData.address?.trim()
       ) {
-        return alert("Program, Contact, and Address cannot be empty.");
+        return alert("Contact and Address cannot be empty.");
+      }
+      
+      const phoneRegex = /^09\d{9}$/;
+      if (!phoneRegex.test(formData.phone?.trim())) {
+        return alert("Please enter a valid 11-digit contact number starting with 09 (e.g. 09123456789).");
       }
     }
     if (section === "requirements") {
@@ -93,6 +95,11 @@ export default function ProfilePage() {
         !formData.emergency_contact_phone?.trim()
       ) {
         return alert("Emergency contact information cannot be empty.");
+      }
+      
+      const phoneRegex = /^09\d{9}$/;
+      if (!phoneRegex.test(formData.emergency_contact_phone?.trim())) {
+        return alert("Please enter a valid 11-digit emergency contact number starting with 09 (e.g. 09123456789).");
       }
       if (!formData.blood_type?.trim())
         return alert("Please select a blood type.");
@@ -159,7 +166,6 @@ export default function ProfilePage() {
   const calculateProgress = () => {
     if (!profile) return 0;
     const requiredFields = [
-      "profile_picture",
       "program",
       "phone",
       "address",
@@ -729,14 +735,15 @@ export default function ProfilePage() {
                   </label>
                   {editingSection === "personal" ? (
                     <input
-                      value={formData.program || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, program: e.target.value })
-                      }
+                      value={profile.program || "Not set"}
+                      disabled
                       style={{
                         padding: "10px",
                         border: "1px solid #ccc",
                         borderRadius: "6px",
+                        background: "#f8f9fa",
+                        color: "#6c757d",
+                        cursor: "not-allowed"
                       }}
                     />
                   ) : (

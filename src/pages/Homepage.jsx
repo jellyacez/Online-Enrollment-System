@@ -69,12 +69,40 @@ function HomepageContent() {
   };
   const studentName = user.full_name;
   const studentId = user.id;
-  const program = "BS Information Technology";
-  const yearLevel = "2nd Year";
-
+  
+  const [profile, setProfile] = useState({
+    program: "Loading...",
+    current_level: "Loading..."
+  });
   const [enrollments, setEnrollments] = useState([]);
 
   useEffect(() => {
+    // Fetch User Profile
+    if (user.id && user.id !== "2024-00123") {
+      fetch(`/api/users/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.program) {
+            setProfile({
+              program: data.program,
+              current_level: data.current_level || "1st Year"
+            });
+          } else {
+            setProfile({
+              program: "BS Information Technology",
+              current_level: "1st Year"
+            });
+          }
+        })
+        .catch((err) => console.error("Failed to fetch profile", err));
+    } else {
+      setProfile({
+        program: "BS Information Technology",
+        current_level: "2nd Year"
+      });
+    }
+
+    // Fetch Enrollments
     fetch("/api/enrollments")
       .then((res) => res.json())
       .then((data) => {
@@ -85,7 +113,10 @@ function HomepageContent() {
         setEnrollments(myEnrolled);
       })
       .catch((err) => console.error("Failed to fetch enrollments", err));
-  }, [user.email]);
+  }, [user.email, user.id]);
+
+  const program = profile.program;
+  const yearLevel = profile.current_level;
 
   const dashboardCards = [
     {
