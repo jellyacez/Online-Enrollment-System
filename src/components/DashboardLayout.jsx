@@ -189,9 +189,9 @@ function EnrollmentModalContent({ closeModal, user }) {
     fetch("/api/enrollments")
       .then(res => res.json())
       .then(data => {
-        // Filter by user and status == 'enrolled'
+        // Filter by user
         const myEnrolled = data.filter(e => 
-          (e.student_name === user.full_name || true) && e.status === 'enrolled'
+          e.student_email === user.email
         );
         setEnrollments(myEnrolled);
         setLoading(false);
@@ -216,10 +216,10 @@ function EnrollmentModalContent({ closeModal, user }) {
           )}
         </div>
         {enrollments.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '20px' }}>You have no officially enrolled subjects yet. Pending requests will not appear here.</div>
+          <div style={{ textAlign: 'center', padding: '20px' }}>You have no enrolled subjects or pending requests yet.</div>
         ) : (
           <table className="grades-table">
-            <thead><tr><th>Code</th><th>Subject</th><th>Section</th><th>Schedule</th><th>Instructor</th></tr></thead>
+            <thead><tr><th>Code</th><th>Subject</th><th>Section</th><th>Schedule</th><th>Status</th></tr></thead>
             <tbody>
               {enrollments.map((s, i) => (
                 <tr key={i}>
@@ -227,7 +227,11 @@ function EnrollmentModalContent({ closeModal, user }) {
                   <td>{s.subject_description}</td>
                   <td>{s.section_name || 'TBA'}</td>
                   <td>{s.schedule || 'TBA'}</td>
-                  <td>{s.instructor || 'TBA'}</td>
+                  <td>
+                    <span className={`status-badge ${s.status === 'enrolled' ? 'passed' : 'progress'}`} style={{textTransform: 'capitalize'}}>
+                      {s.status}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>

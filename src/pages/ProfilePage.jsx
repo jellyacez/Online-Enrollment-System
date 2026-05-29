@@ -44,6 +44,9 @@ export default function ProfilePage() {
           email_alerts: true,
           sms_alerts: false,
           google_linked: true,
+          birth_cert: "#dummy-birth-cert",
+          form_138: "#dummy-form-138",
+          good_moral: "#dummy-good-moral",
           ...data,
         };
         setProfile(enrichedData);
@@ -93,8 +96,6 @@ export default function ProfilePage() {
       }
       if (!formData.blood_type?.trim())
         return alert("Please select a blood type.");
-      if (!formData.signature_image)
-        return alert("A signature image is required.");
     }
     if (section === "security") {
       if (passwords.new !== passwords.confirm)
@@ -107,22 +108,38 @@ export default function ProfilePage() {
     setSaveMessage("");
 
     try {
-      const res = await fetch(`/api/users/${user.id}/profile`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      if (section === "security") {
+        const res = await fetch(`/api/users/${user.id}/password`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ currentPassword: passwords.current, newPassword: passwords.new }),
+        });
 
-      if (res.ok) {
-        setProfile(formData);
-        setEditingSection(null);
-        if (section === "security")
+        if (res.ok) {
+          setEditingSection(null);
           setPasswords({ current: "", new: "", confirm: "" });
-        setSaveMessage(`Changes saved successfully! ✅`);
-        setTimeout(() => setSaveMessage(""), 3000);
+          setSaveMessage(`Password updated successfully! ✅`);
+          setTimeout(() => setSaveMessage(""), 3000);
+        } else {
+          const data = await res.json();
+          alert("Failed to update password: " + (data.message || "Unknown error"));
+        }
       } else {
-        const data = await res.json();
-        alert("Failed to save: " + (data.message || "Unknown error"));
+        const res = await fetch(`/api/users/${user.id}/profile`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+
+        if (res.ok) {
+          setProfile(formData);
+          setEditingSection(null);
+          setSaveMessage(`Changes saved successfully! ✅`);
+          setTimeout(() => setSaveMessage(""), 3000);
+        } else {
+          const data = await res.json();
+          alert("Failed to save: " + (data.message || "Unknown error"));
+        }
       }
     } catch (err) {
       console.error(err);
@@ -149,7 +166,6 @@ export default function ProfilePage() {
       "emergency_contact_name",
       "emergency_contact_phone",
       "blood_type",
-      "signature_image",
     ];
     const filledFields = requiredFields.filter(
       (field) => profile[field] && profile[field].trim() !== "",
@@ -229,7 +245,6 @@ export default function ProfilePage() {
                 style={{
                   overflow: "hidden",
                   position: "relative",
-                  cursor: editingSection === "personal" ? "pointer" : "default",
                   width: "120px",
                   height: "120px",
                   borderRadius: "50%",
@@ -241,9 +256,6 @@ export default function ProfilePage() {
                   boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                   border: "3px solid white",
                 }}
-                onClick={() =>
-                  editingSection === "personal" && profilePicRef.current.click()
-                }
               >
                 {formData.profile_picture ? (
                   <img
@@ -260,31 +272,7 @@ export default function ProfilePage() {
                     {profile.full_name.substring(0, 2).toUpperCase()}
                   </span>
                 )}
-                {editingSection === "personal" && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      bottom: 0,
-                      background: "rgba(234, 88, 12, 0.8)",
-                      color: "white",
-                      width: "100%",
-                      textAlign: "center",
-                      fontSize: "0.8rem",
-                      padding: "6px 0",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    UPLOAD
-                  </div>
-                )}
               </div>
-              <input
-                type="file"
-                accept="image/*"
-                ref={profilePicRef}
-                style={{ display: "none" }}
-                onChange={(e) => handleFileUpload(e, "profile_picture")}
-              />
 
               <h3
                 style={{
@@ -995,116 +983,7 @@ export default function ProfilePage() {
                     <span>{profile.blood_type || "Not set"}</span>
                   )}
                 </div>
-                <div
-                  className="info-item"
-                  style={{
-                    gridColumn: "1 / -1",
-                    background: "#fcfcfc",
-                    padding: "15px",
-                    borderRadius: "8px",
-                    border: "1px dashed #ccc",
-                  }}
-                >
-                  <label
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <span>
-                      Digital Signature for ID{" "}
-                      <span style={{ color: "red" }}>*</span>
-                    </span>
-                    {profile.signature_image &&
-                      editingSection !== "requirements" && (
-                        <span
-                          style={{
-                            fontSize: "0.8rem",
-                            color: "green",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          ✔️ Uploaded
-                        </span>
-                      )}
-                  </label>
-                  {editingSection === "requirements" ? (
-                    <div
-                      style={{
-                        marginTop: "10px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "15px",
-                      }}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => signatureRef.current.click()}
-                        style={{
-                          padding: "8px 16px",
-                          background: "white",
-                          border: "1px solid var(--orange-500)",
-                          color: "var(--orange-600)",
-                          borderRadius: "6px",
-                          cursor: "pointer",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Upload Image
-                      </button>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        ref={signatureRef}
-                        style={{ display: "none" }}
-                        onChange={(e) => handleFileUpload(e, "signature_image")}
-                      />
-                      {formData.signature_image && (
-                        <div
-                          style={{
-                            border: "1px solid #eee",
-                            padding: "5px",
-                            background: "white",
-                            borderRadius: "4px",
-                          }}
-                        >
-                          <img
-                            src={formData.signature_image}
-                            alt="Signature Preview"
-                            style={{ maxHeight: "40px", display: "block" }}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div style={{ marginTop: "10px" }}>
-                      {profile.signature_image ? (
-                        <img
-                          src={profile.signature_image}
-                          alt="Signature"
-                          style={{
-                            maxHeight: "60px",
-                            background: "white",
-                            padding: "5px",
-                            borderRadius: "4px",
-                            border: "1px solid #eee",
-                          }}
-                        />
-                      ) : (
-                        <span
-                          style={{
-                            color: "#dc3545",
-                            fontStyle: "italic",
-                            fontSize: "0.9rem",
-                          }}
-                        >
-                          Missing - Required for ID processing.
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
+
               </div>
             </div>
 
