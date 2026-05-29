@@ -44,6 +44,8 @@ CREATE TABLE subjects (
     subject_code VARCHAR(50) NOT NULL UNIQUE,
     description TEXT,
     units INT NOT NULL,
+    subject_type ENUM('general', 'major') DEFAULT 'general',
+    aligned_program VARCHAR(100) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
