@@ -45,6 +45,9 @@ const pool = require('./db');
             program VARCHAR(100),
             second_choice_course VARCHAR(100),
             last_school VARCHAR(255),
+            emergency_contact_name VARCHAR(255),
+            emergency_contact_phone VARCHAR(50),
+            blood_type VARCHAR(10),
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )
     `);
@@ -69,6 +72,8 @@ const pool = require('./db');
             subject_code VARCHAR(50) NOT NULL UNIQUE,
             description TEXT,
             units INT NOT NULL,
+            subject_type ENUM('general', 'major') DEFAULT 'general',
+            aligned_program VARCHAR(100) NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     `);
