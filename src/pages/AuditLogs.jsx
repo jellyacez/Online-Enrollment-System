@@ -11,6 +11,7 @@ import {
 import { ChevronUp, ChevronDown } from "lucide-react";
 import "../css/index.css";
 
+// AuditLogs component for viewing system audit logs with filtering and sorting
 export default function AuditLogs() {
   const [logs, setLogs] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -38,7 +39,8 @@ export default function AuditLogs() {
       },
       {
         header: "User",
-        accessorFn: (row) => `${row.user_name || "System/Unknown"} (${row.email || "N/A"})`,
+        accessorFn: (row) =>
+          `${row.user_name || "System/Unknown"} (${row.email || "N/A"})`,
         id: "user",
       },
       {
@@ -47,9 +49,25 @@ export default function AuditLogs() {
         cell: (info) => {
           const action = info.getValue();
           let color = "#333";
-          if (action.includes("CREATE") || action.includes("REGISTER") || action.includes("ENROLL")) color = "#28a745";
-          if (action.includes("DELETE") || action.includes("DROP") || action.includes("ARCHIVE") || action.includes("REJECT")) color = "#dc3545";
-          if (action.includes("UPDATE") || action.includes("LOGIN") || action.includes("APPROVE")) color = "#007bff";
+          if (
+            action.includes("CREATE") ||
+            action.includes("REGISTER") ||
+            action.includes("ENROLL")
+          )
+            color = "#28a745";
+          if (
+            action.includes("DELETE") ||
+            action.includes("DROP") ||
+            action.includes("ARCHIVE") ||
+            action.includes("REJECT")
+          )
+            color = "#dc3545";
+          if (
+            action.includes("UPDATE") ||
+            action.includes("LOGIN") ||
+            action.includes("APPROVE")
+          )
+            color = "#007bff";
           return <strong style={{ color }}>{action}</strong>;
         },
       },
@@ -58,7 +76,7 @@ export default function AuditLogs() {
         accessorKey: "details",
       },
     ],
-    []
+    [],
   );
 
   const table = useReactTable({
@@ -110,28 +128,45 @@ export default function AuditLogs() {
             />
           </div>
         </div>
-        
-        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
+
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            marginTop: "20px",
+          }}
+        >
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} style={{ background: "#eee", textAlign: "left" }}>
+              <tr
+                key={headerGroup.id}
+                style={{ background: "#eee", textAlign: "left" }}
+              >
                 {headerGroup.headers.map((header) => (
-                  <th 
-                    key={header.id} 
-                    style={{ 
-                      padding: "10px", 
+                  <th
+                    key={header.id}
+                    style={{
+                      padding: "10px",
                       borderBottom: "2px solid #ccc",
-                      cursor: header.column.getCanSort() ? "pointer" : "default",
+                      cursor: header.column.getCanSort()
+                        ? "pointer"
+                        : "default",
                       userSelect: "none",
                     }}
                     onClick={header.column.getToggleSortingHandler()}
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                      }}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                       {{
                         asc: <ChevronUp size={16} />,
@@ -147,7 +182,10 @@ export default function AuditLogs() {
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>
+                  <td
+                    key={cell.id}
+                    style={{ padding: "10px", borderBottom: "1px solid #ddd" }}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -155,9 +193,17 @@ export default function AuditLogs() {
             ))}
           </tbody>
         </table>
-        
+
         {/* Pagination Controls */}
-        <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "20px", paddingTop: "10px" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "10px",
+            marginTop: "20px",
+            paddingTop: "10px",
+          }}
+        >
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
@@ -165,11 +211,18 @@ export default function AuditLogs() {
           >
             Previous
           </button>
-          
-          <span style={{ display: "flex", alignItems: "center", fontWeight: "bold" }}>
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount() || 1}
+
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              fontWeight: "bold",
+            }}
+          >
+            Page {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount() || 1}
           </span>
-          
+
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}

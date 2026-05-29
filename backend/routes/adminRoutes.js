@@ -5,6 +5,7 @@ const pool = require("../config/db");
 // @route   GET api/admin/stats
 // @desc    Get dashboard statistics for admin
 // @access  Public (should be protected by admin middleware in production)
+
 router.get("/stats", async (req, res) => {
   try {
     const [users] = await pool.query(
@@ -54,10 +55,8 @@ router.get("/stats", async (req, res) => {
 });
 
 // @route   GET api/admin/users
-
-
-// @route   GET api/admin/users
 // @desc    Get all users with pagination and search
+
 router.get("/users", async (req, res) => {
   try {
     // Extract query parameters with defaults
@@ -67,7 +66,6 @@ router.get("/users", async (req, res) => {
     const offsetInt = (parseInt(page) - 1) * limitInt;
     const searchTerm = `%${search}%`;
 
-    /** Calculate total records for frontend pagination component */
     const countQuery =
       "SELECT COUNT(*) as total FROM users WHERE full_name LIKE ? OR email LIKE ?";
     const [countResult] = await pool.query(countQuery, [
@@ -75,7 +73,6 @@ router.get("/users", async (req, res) => {
       searchTerm,
     ]);
 
-    /** Retrieve paginated user data */
     const dataQuery = `
             SELECT id, full_name, email, role, created_at 
             FROM users 
@@ -90,7 +87,6 @@ router.get("/users", async (req, res) => {
       offsetInt,
     ]);
 
-    /** Send payload containing users array and total count */
     res.json({
       users: users,
       total: countResult[0].total,
@@ -103,6 +99,7 @@ router.get("/users", async (req, res) => {
 
 // @route   POST api/admin/users
 // @desc    Create a new user
+
 router.post("/users", async (req, res) => {
   const { full_name, email, password, role } = req.body;
 
@@ -124,6 +121,7 @@ router.post("/users", async (req, res) => {
 
 // @route   PUT api/admin/users/:id
 // @desc    Update a user
+
 router.put("/users/:id", async (req, res) => {
   const { full_name, email, role } = req.body;
   try {
@@ -140,6 +138,7 @@ router.put("/users/:id", async (req, res) => {
 
 // @route   DELETE api/admin/users/:id
 // @desc    Delete a user (moves to archived_users first)
+
 router.delete("/users/:id", async (req, res) => {
   const userId = req.params.id;
   try {
@@ -178,6 +177,7 @@ router.delete("/users/:id", async (req, res) => {
 
 // @route   GET api/admin/users/archived
 // @desc    Get all archived users
+
 router.get("/archived_users", async (req, res) => {
   try {
     const [archived] = await pool.query(

@@ -1,28 +1,28 @@
-const mysql = require('mysql2/promise');
-require('dotenv').config();
+const mysql = require("mysql2/promise");
+require("dotenv").config();
 async function setupDatabase() {
+  const tempConnection = await mysql.createConnection({
+    host: process.env.DB_HOST || "localhost",
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASSWORD || "",
+  });
 
+  await tempConnection.query(
+    `CREATE DATABASE IF NOT EXISTS enrollment_system_db`,
+  );
 
-const tempConnection = await mysql.createConnection({
-        host: process.env.DB_HOST || 'localhost',
-        user: process.env.DB_USER || 'root',
-        password: process.env.DB_PASSWORD || ''
-    });
+  // Terminate the temporary connection
+  await tempConnection.end();
 
-await tempConnection.query(`CREATE DATABASE IF NOT EXISTS enrollment_system_db`);
-    
-    // 3. Terminate the temporary connection
-    await tempConnection.end();
+  // Import the standard pool only AFTER the database is guaranteed to exist
+  const pool = require("./db");
+  // Create database if missing
 
-    // 4. Import the standard pool only AFTER the database is guaranteed to exist
-const pool = require('./db');
-    // Create database if missing
- 
-    // Select database
-    await pool.query(`USE enrollment_system_db`);
+  // Select database
+  await pool.query(`USE enrollment_system_db`);
 
-    // USERS
-    await pool.query(`
+  // USERS
+  await pool.query(`
         CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             full_name VARCHAR(255) NOT NULL,
@@ -33,8 +33,8 @@ const pool = require('./db');
         )
     `);
 
-    // USER PROFILES
-    await pool.query(`
+  // USER PROFILES
+  await pool.query(`
         CREATE TABLE IF NOT EXISTS user_profiles (
             user_id INT PRIMARY KEY,
             student_type ENUM('old', 'new', 'transferee') DEFAULT 'old',
@@ -52,8 +52,8 @@ const pool = require('./db');
         )
     `);
 
-    // ARCHIVED USERS
-    await pool.query(`
+  // ARCHIVED USERS
+  await pool.query(`
         CREATE TABLE IF NOT EXISTS archived_users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             original_user_id INT,
@@ -65,8 +65,8 @@ const pool = require('./db');
         )
     `);
 
-    // SUBJECTS
-    await pool.query(`
+  // SUBJECTS
+  await pool.query(`
         CREATE TABLE IF NOT EXISTS subjects (
             id INT AUTO_INCREMENT PRIMARY KEY,
             subject_code VARCHAR(50) NOT NULL UNIQUE,
@@ -78,8 +78,8 @@ const pool = require('./db');
         )
     `);
 
-    // SECTIONS
-    await pool.query(`
+  // SECTIONS
+  await pool.query(`
         CREATE TABLE IF NOT EXISTS sections (
             id INT AUTO_INCREMENT PRIMARY KEY,
             subject_id INT NOT NULL,
@@ -92,8 +92,8 @@ const pool = require('./db');
         )
     `);
 
-    // ENROLLMENTS
-    await pool.query(`
+  // ENROLLMENTS
+  await pool.query(`
         CREATE TABLE IF NOT EXISTS enrollments (
             id INT AUTO_INCREMENT PRIMARY KEY,
             student_id INT NOT NULL,
@@ -107,8 +107,8 @@ const pool = require('./db');
         )
     `);
 
-    // AUDIT LOGS
-    await pool.query(`
+  // AUDIT LOGS
+  await pool.query(`
         CREATE TABLE IF NOT EXISTS audit_logs (
             id INT AUTO_INCREMENT PRIMARY KEY,
             user_id INT,
@@ -119,8 +119,8 @@ const pool = require('./db');
         )
     `);
 
-    console.log('Database and tables ready');
-    console.log('Database ready');
+  console.log("Database and tables ready");
+  console.log("Database ready");
 }
 
 module.exports = setupDatabase;

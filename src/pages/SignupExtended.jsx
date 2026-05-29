@@ -1,13 +1,18 @@
-  import { useState, useEffect } from "react";
-  import { useNavigate, useLocation } from "react-router-dom";
-  import Logo from "../assets/UniLogo.png";
-  import "../css/login-signup.css";
-  
-  export default function SignupExtended() {
-    const navigate = useNavigate();
-    const location = useLocation();
-  
-    const { name = "", email = "", password = "", studentType = "" } = location.state || {};
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import Logo from "../assets/UniLogo.png";
+import "../css/login-signup.css";
+
+export default function SignupExtended() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const {
+    name = "",
+    email = "",
+    password = "",
+    studentType = "",
+  } = location.state || {};
 
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
@@ -130,7 +135,7 @@
               id="phone"
               value={phone}
               onChange={(e) => {
-                const val = e.target.value.replace(/\D/g, ""); // Remove non-digits
+                const val = e.target.value.replace(/\D/g, "");
                 setPhone(val);
               }}
               required
@@ -220,27 +225,56 @@
             >
               <option value="">Select a course</option>
 
-              <option value="BS Information Technology" disabled={program === "BS Information Technology"}>
+              <option
+                value="BS Information Technology"
+                disabled={program === "BS Information Technology"}
+              >
                 BS Information Technology
               </option>
 
-              <option value="BS Computer Science" disabled={program === "BS Computer Science"}>BS Computer Science</option>
+              <option
+                value="BS Computer Science"
+                disabled={program === "BS Computer Science"}
+              >
+                BS Computer Science
+              </option>
 
-              <option value="BS Information Systems" disabled={program === "BS Information Systems"}>
+              <option
+                value="BS Information Systems"
+                disabled={program === "BS Information Systems"}
+              >
                 BS Information Systems
               </option>
 
-              <option value="BS Business Administration" disabled={program === "BS Business Administration"}>
+              <option
+                value="BS Business Administration"
+                disabled={program === "BS Business Administration"}
+              >
                 BS Business Administration
               </option>
 
-              <option value="BS Accountancy" disabled={program === "BS Accountancy"}>BS Accountancy</option>
+              <option
+                value="BS Accountancy"
+                disabled={program === "BS Accountancy"}
+              >
+                BS Accountancy
+              </option>
 
-              <option value="BS Nursing" disabled={program === "BS Nursing"}>BS Nursing</option>
+              <option value="BS Nursing" disabled={program === "BS Nursing"}>
+                BS Nursing
+              </option>
 
-              <option value="BS Civil Engineering" disabled={program === "BS Civil Engineering"}>BS Civil Engineering</option>
+              <option
+                value="BS Civil Engineering"
+                disabled={program === "BS Civil Engineering"}
+              >
+                BS Civil Engineering
+              </option>
 
-              <option value="BS Mechanical Engineering" disabled={program === "BS Mechanical Engineering"}>
+              <option
+                value="BS Mechanical Engineering"
+                disabled={program === "BS Mechanical Engineering"}
+              >
                 BS Mechanical Engineering
               </option>
             </select>

@@ -12,7 +12,8 @@ export default function ManageSubjects() {
   const [selectedSection, setSelectedSection] = useState({});
 
   const user = JSON.parse(localStorage.getItem("user")) || {};
-  
+
+  // Redirect to login if user is not authenticated
   useEffect(() => {
     if (!user.id) {
       window.location.href = "/login";
@@ -25,13 +26,13 @@ export default function ManageSubjects() {
       fetchData(false);
     }, 10000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.id, user.email]);
 
+  /** Fetches enrolled subjects and available subjects for the student,
+   *  with careful handling of section selections and program alignment*/
   const fetchData = async (showLoading = false) => {
     if (showLoading) setLoading(true);
     try {
-      /** Fetch User Profile to get their program */
       const userRes = await fetch(`/api/users/${user.id}`);
       let userProfile = {};
       if (userRes.ok) {
@@ -39,50 +40,49 @@ export default function ManageSubjects() {
       }
       const myProgram = userProfile.program || "";
 
-      /** Fetch all available sections and subject details */
       const sectionsRes = await fetch("/api/sections");
       const sectionsData = await sectionsRes.json();
 
-      /** Fetch student enrollment records */
       const enrollmentsRes = await fetch("/api/enrollments");
       const enrollmentsData = await enrollmentsRes.json();
 
-      /** Filter enrollments for current user */
-      const myEnrollments = enrollmentsData.filter(e => e.student_email === user.email);
+      const myEnrollments = enrollmentsData.filter(
+        (e) => e.student_email === user.email,
+      );
 
-      /** Map enrolled data to frontend structure */
-      const enrolledFormat = myEnrollments.map(e => ({
+      const enrolledFormat = myEnrollments.map((e) => ({
         id: e.id,
         subject_id: e.subject_id,
         code: e.subject_code,
         name: e.subject_description,
-        unit: 3, 
+        unit: 3,
         section: e.section_name || "TBA",
         schedule: e.schedule || "TBA",
-        status: e.status
+        status: e.status,
       }));
 
       setMySubjects(enrolledFormat);
 
-      /** Calculate subjects available for enrollment */
-      const enrolledSubjectCodes = enrolledFormat.map(s => s.code);
-      
-      /** Aggregate sections under their respective subjects */
-      const subjectsMap = {};
-      sectionsData.forEach(s => {
-        // Filter based on subject type and program alignment
-        const isGeneral = s.subject_type === 'general' || !s.subject_type;
-        const isAlignedMajor = s.subject_type === 'major' && s.aligned_program === myProgram;
+      const enrolledSubjectCodes = enrolledFormat.map((s) => s.code);
 
-        if ((isGeneral || isAlignedMajor) && !enrolledSubjectCodes.includes(s.subject_code)) {
+      const subjectsMap = {};
+      sectionsData.forEach((s) => {
+        const isGeneral = s.subject_type === "general" || !s.subject_type;
+        const isAlignedMajor =
+          s.subject_type === "major" && s.aligned_program === myProgram;
+
+        if (
+          (isGeneral || isAlignedMajor) &&
+          !enrolledSubjectCodes.includes(s.subject_code)
+        ) {
           if (!subjectsMap[s.subject_id]) {
             subjectsMap[s.subject_id] = {
               id: s.subject_id,
               code: s.subject_code,
               name: s.description,
               unit: s.units,
-              type: s.subject_type || 'general',
-              sections: []
+              type: s.subject_type || "general",
+              sections: [],
             };
           }
           if (s.section_id) {
@@ -94,18 +94,17 @@ export default function ManageSubjects() {
       const availableFormat = Object.values(subjectsMap);
 
       setAvailableSubjects(availableFormat);
-      
-      /** Set default section selections carefully to avoid overwriting user selection */
-      setSelectedSection(prev => {
+
+      // Pre-select first available section for each subject if not already selected
+      setSelectedSection((prev) => {
         const nextSelected = { ...prev };
-        availableFormat.forEach(sub => {
+        availableFormat.forEach((sub) => {
           if (sub.sections.length > 0 && !nextSelected[sub.id]) {
             nextSelected[sub.id] = sub.sections[0].section_id.toString();
           }
         });
         return nextSelected;
       });
-
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
@@ -117,7 +116,9 @@ export default function ManageSubjects() {
     const sectionId = selectedSection[subject.id];
     if (!sectionId) return alert("Please select a section.");
 
-    const section = subject.sections.find(s => s.section_id.toString() === sectionId);
+    const section = subject.sections.find(
+      (s) => s.section_id.toString() === sectionId,
+    );
     if (section && section.enrolled_slots >= section.max_slots) {
       return alert("This section is already full.");
     }
@@ -126,11 +127,16 @@ export default function ManageSubjects() {
       const response = await fetch("/api/enrollments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ student_id: user.id, subject_id: subject.id, section_id: sectionId })
+        body: JSON.stringify({
+          student_id: user.id,
+          subject_id: subject.id,
+          section_id: sectionId,
+        }),
       });
 
+      // Assuming new enrollments are auto-approved for simplicity; adjust as needed
       if (response.ok) {
-        fetchData(); // Refresh data from backend
+        fetchData();
         setActiveView("enrolled");
       } else {
         alert("Failed to enroll subject.");
@@ -142,14 +148,14 @@ export default function ManageSubjects() {
 
   const executeDrop = async () => {
     if (!subjectToDrop) return;
-    
+
     try {
       const response = await fetch(`/api/enrollments/${subjectToDrop.id}`, {
-        method: "DELETE"
+        method: "DELETE",
       });
 
       if (response.ok) {
-        fetchData(); // Refresh data
+        fetchData();
         setIsDropModalOpen(false);
         setSubjectToDrop(null);
       } else {
@@ -160,7 +166,6 @@ export default function ManageSubjects() {
     }
   };
 
-  /* Modal UI State Management */
   const [isDropModalOpen, setIsDropModalOpen] = useState(false);
   const [subjectToDrop, setSubjectToDrop] = useState(null);
 
@@ -184,7 +189,8 @@ export default function ManageSubjects() {
           <div className="units-counter">
             Total Units:{" "}
             <strong>
-              {mySubjects.reduce((total, subject) => total + subject.unit, 0)} / 21
+              {mySubjects.reduce((total, subject) => total + subject.unit, 0)} /
+              21
             </strong>
           </div>
         </div>
@@ -205,7 +211,10 @@ export default function ManageSubjects() {
         </div>
 
         {loading ? (
-          <div className="table-container" style={{ padding: "20px", textAlign: "center" }}>
+          <div
+            className="table-container"
+            style={{ padding: "20px", textAlign: "center" }}
+          >
             Loading subjects...
           </div>
         ) : (
@@ -213,7 +222,9 @@ export default function ManageSubjects() {
             {ActiveView === "enrolled" && (
               <div className="table-container">
                 {mySubjects.length === 0 ? (
-                  <div className="emptyState">You have no subjects enrolled yet.</div>
+                  <div className="emptyState">
+                    You have no subjects enrolled yet.
+                  </div>
                 ) : (
                   <table className="subjects-table">
                     <thead>
@@ -230,7 +241,9 @@ export default function ManageSubjects() {
                         <tr key={subject.id}>
                           <td className="textPrimary">{subject.code}</td>
                           <td>{subject.name}</td>
-                          <td style={{ textTransform: "capitalize" }}>{subject.status}</td>
+                          <td style={{ textTransform: "capitalize" }}>
+                            {subject.status}
+                          </td>
                           <td>{subject.unit}</td>
                           <td className="actionButtons">
                             <button
@@ -271,8 +284,19 @@ export default function ManageSubjects() {
                           <td className="textPrimary">{subject.code}</td>
                           <td>
                             {subject.name}
-                            {subject.type === 'major' && (
-                              <span style={{ marginLeft: '8px', padding: '2px 6px', fontSize: '0.7em', backgroundColor: 'var(--orange-100)', color: 'var(--orange-800)', borderRadius: '10px' }}>MAJOR</span>
+                            {subject.type === "major" && (
+                              <span
+                                style={{
+                                  marginLeft: "8px",
+                                  padding: "2px 6px",
+                                  fontSize: "0.7em",
+                                  backgroundColor: "var(--orange-100)",
+                                  color: "var(--orange-800)",
+                                  borderRadius: "10px",
+                                }}
+                              >
+                                MAJOR
+                              </span>
                             )}
                           </td>
                           <td>
@@ -287,14 +311,29 @@ export default function ManageSubjects() {
                                   })
                                 }
                               >
-                                {subject.sections.map(sec => (
-                                  <option key={sec.section_id} value={sec.section_id} disabled={sec.enrolled_slots >= sec.max_slots}>
-                                    {sec.section_name} ({sec.enrolled_slots}/{sec.max_slots} slots)
+                                {subject.sections.map((sec) => (
+                                  <option
+                                    key={sec.section_id}
+                                    value={sec.section_id}
+                                    disabled={
+                                      sec.enrolled_slots >= sec.max_slots
+                                    }
+                                  >
+                                    {sec.section_name} ({sec.enrolled_slots}/
+                                    {sec.max_slots} slots)
                                   </option>
                                 ))}
                               </select>
                             ) : (
-                              <span style={{color: '#999', fontStyle: 'italic', fontSize: '0.9em'}}>No sections available</span>
+                              <span
+                                style={{
+                                  color: "#999",
+                                  fontStyle: "italic",
+                                  fontSize: "0.9em",
+                                }}
+                              >
+                                No sections available
+                              </span>
                             )}
                           </td>
                           <td>{subject.unit}</td>
@@ -303,7 +342,14 @@ export default function ManageSubjects() {
                               className="addButton"
                               onClick={() => handleAddSubject(subject)}
                               disabled={subject.sections.length === 0}
-                              style={{ opacity: subject.sections.length === 0 ? 0.5 : 1, cursor: subject.sections.length === 0 ? 'not-allowed' : 'pointer' }}
+                              style={{
+                                opacity:
+                                  subject.sections.length === 0 ? 0.5 : 1,
+                                cursor:
+                                  subject.sections.length === 0
+                                    ? "not-allowed"
+                                    : "pointer",
+                              }}
                             >
                               Add
                             </button>

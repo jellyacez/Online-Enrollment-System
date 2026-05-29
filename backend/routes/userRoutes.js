@@ -128,9 +128,12 @@ router.put("/:id/password", async (req, res) => {
 
   try {
     const bcrypt = require("bcrypt");
-    
+
     // Check if user exists and get current password
-    const [users] = await pool.query("SELECT password FROM users WHERE id = ?", [req.params.id]);
+    const [users] = await pool.query(
+      "SELECT password FROM users WHERE id = ?",
+      [req.params.id],
+    );
     if (users.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -148,7 +151,10 @@ router.put("/:id/password", async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
     // Update password
-    await pool.query("UPDATE users SET password = ? WHERE id = ?", [hashedPassword, req.params.id]);
+    await pool.query("UPDATE users SET password = ? WHERE id = ?", [
+      hashedPassword,
+      req.params.id,
+    ]);
 
     res.json({ message: "Password updated successfully" });
   } catch (err) {

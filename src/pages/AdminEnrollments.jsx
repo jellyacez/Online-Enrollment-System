@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import "../css/adminenrollment.css";
 
+// AdminEnrollments component for managing student enrollment requests
 export default function AdminEnrollments() {
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +16,6 @@ export default function AdminEnrollments() {
     try {
       const res = await fetch("/api/enrollments");
       const data = await res.json();
-      // Show pending first
       const sorted = data.sort((a, b) => {
         if (a.status === "pending" && b.status !== "pending") return -1;
         if (a.status !== "pending" && b.status === "pending") return 1;

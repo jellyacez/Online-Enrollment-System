@@ -8,7 +8,7 @@ export default function Login() {
   const location = useLocation();
   const [isLogin, setIsLogin] = useState(true);
 
-  // Form States
+  //  Form states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -19,7 +19,7 @@ export default function Login() {
   // Password Visibility State
   const [showPassword, setShowPassword] = useState(false);
 
-  // Clear URL state so message doesn't persist on reload
+  // Clear any message passed via location state on component mount
   useEffect(() => {
     if (location.state?.message) {
       window.history.replaceState({}, document.title);
@@ -76,7 +76,7 @@ export default function Login() {
       return;
     }
 
-    // Redirect all new signups to extended signup with basic details
+    // For simplicity, we pass the sign-up data to the extended sign-up page via state
     navigate("/signup-extended", {
       state: { name, email, password, studentType },
     });
@@ -86,7 +86,7 @@ export default function Login() {
     console.log("Google Auth Triggered");
   };
 
-  // Reusable inline styles for the toggle button
+  // Inline style for the password visibility toggle button
   const toggleBtnStyle = {
     position: "absolute",
     right: "10px",
@@ -150,8 +150,7 @@ export default function Login() {
                   placeholder="********"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  style={{ width: "100%", paddingRight: "60px" }} // Give room for the text button
-                  required
+                  style={{ width: "100%", paddingRight: "60px" }}
                 />
                 <button
                   type="button"

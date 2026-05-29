@@ -29,7 +29,7 @@ app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/audit", require("./routes/auditRoutes"));
 
-// New route to count audit logs for the dashboard <---
+// New API Endpoints for Dashboard Metrics
 app.get("/api/audit-logs/count", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT COUNT(*) as total FROM audit_logs");
@@ -40,9 +40,9 @@ app.get("/api/audit-logs/count", async (req, res) => {
   }
 });
 
+// Endpoint to get count of active users in the last 15 minutes
 app.get("/api/active-users/count", async (req, res) => {
   try {
-    // Counts unique user_ids that have an audit log entry in the last 15 minutes.
     const [rows] = await pool.query(`
             SELECT COUNT(DISTINCT user_id) as total 
             FROM audit_logs 

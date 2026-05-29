@@ -1,5 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import DashboardLayout from "../components/DashboardLayout";
+import {
+  CheckCircle,
+  GraduationCap,
+  ShieldCheck,
+  Globe,
+  ClipboardList,
+  Edit2,
+  Save,
+  IdCard,
+  FolderOpen,
+  Check,
+  X,
+} from "lucide-react";
 import "../css/Homepage.css";
 
 export default function ProfilePage() {
@@ -30,7 +43,7 @@ export default function ProfilePage() {
     good_moral: useRef(null),
   };
 
-
+  // Fetch user profile data on component mount and enrich with dummy data for demonstration
   useEffect(() => {
     fetch(`/api/users/${user.id}`)
       .then((res) => {
@@ -64,7 +77,7 @@ export default function ProfilePage() {
       });
   }, [user.id, user.full_name]);
 
-  // --- Handlers ---
+  //  Handle file uploads for profile documents and convert to Base64 for preview/storage
   const handleFileUpload = (e, field) => {
     const file = e.target.files[0];
     if (file) {
@@ -78,16 +91,15 @@ export default function ProfilePage() {
 
   const handleSave = async (section) => {
     if (section === "personal") {
-      if (
-        !formData.phone?.trim() ||
-        !formData.address?.trim()
-      ) {
+      if (!formData.phone?.trim() || !formData.address?.trim()) {
         return alert("Contact and Address cannot be empty.");
       }
-      
+
       const phoneRegex = /^09\d{9}$/;
       if (!phoneRegex.test(formData.phone?.trim())) {
-        return alert("Please enter a valid 11-digit contact number starting with 09 (e.g. 09123456789).");
+        return alert(
+          "Please enter a valid 11-digit contact number starting with 09 (e.g. 09123456789).",
+        );
       }
     }
     if (section === "requirements") {
@@ -97,10 +109,12 @@ export default function ProfilePage() {
       ) {
         return alert("Emergency contact information cannot be empty.");
       }
-      
+
       const phoneRegex = /^09\d{9}$/;
       if (!phoneRegex.test(formData.emergency_contact_phone?.trim())) {
-        return alert("Please enter a valid 11-digit emergency contact number starting with 09 (e.g. 09123456789).");
+        return alert(
+          "Please enter a valid 11-digit emergency contact number starting with 09 (e.g. 09123456789).",
+        );
       }
       if (!formData.blood_type?.trim())
         return alert("Please select a blood type.");
@@ -120,17 +134,22 @@ export default function ProfilePage() {
         const res = await fetch(`/api/users/${user.id}/password`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ currentPassword: passwords.current, newPassword: passwords.new }),
+          body: JSON.stringify({
+            currentPassword: passwords.current,
+            newPassword: passwords.new,
+          }),
         });
 
         if (res.ok) {
           setEditingSection(null);
           setPasswords({ current: "", new: "", confirm: "" });
-          setSaveMessage(`Password updated successfully! ✅`);
+          setSaveMessage(`Password updated successfully!`);
           setTimeout(() => setSaveMessage(""), 3000);
         } else {
           const data = await res.json();
-          alert("Failed to update password: " + (data.message || "Unknown error"));
+          alert(
+            "Failed to update password: " + (data.message || "Unknown error"),
+          );
         }
       } else {
         const res = await fetch(`/api/users/${user.id}/profile`, {
@@ -142,7 +161,7 @@ export default function ProfilePage() {
         if (res.ok) {
           setProfile(formData);
           setEditingSection(null);
-          setSaveMessage(`Changes saved successfully! ✅`);
+          setSaveMessage(`Changes saved successfully!`);
           setTimeout(() => setSaveMessage(""), 3000);
         } else {
           const data = await res.json();
@@ -163,7 +182,8 @@ export default function ProfilePage() {
     setEditingSection(null);
   };
 
-  // --- Calculations ---
+  /**Calculate profile completion percentage based
+   * on required fields and display progress bar accordingly*/
   const calculateProgress = () => {
     if (!profile) return 0;
     const requiredFields = [
@@ -224,8 +244,13 @@ export default function ProfilePage() {
               fontWeight: "bold",
               border: "1px solid #c3e6cb",
               marginBottom: "20px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
             }}
           >
+            <CheckCircle size={20} />
             {saveMessage}
           </div>
         )}
@@ -374,9 +399,12 @@ export default function ProfilePage() {
                   borderBottom: "2px solid var(--orange-100)",
                   paddingBottom: "10px",
                   marginBottom: "15px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
                 }}
               >
-                🎓 Academic Status
+                <GraduationCap size={20} /> Academic Status
               </h2>
               <div
                 style={{
@@ -473,9 +501,12 @@ export default function ProfilePage() {
                     fontSize: "1.1rem",
                     fontWeight: "700",
                     margin: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
                   }}
                 >
-                  🛡️ Security
+                  <ShieldCheck size={20} /> Security
                 </h2>
                 {editingSection !== "security" ? (
                   <button
@@ -601,7 +632,7 @@ export default function ProfilePage() {
                   marginBottom: "20px",
                 }}
               >
-                <span style={{ fontSize: "1.2rem" }}>🇬</span>
+                <Globe size={20} />
                 <span style={{ fontSize: "0.9rem", fontWeight: "600" }}>
                   Google Account
                 </span>
@@ -655,9 +686,12 @@ export default function ProfilePage() {
                     fontSize: "1.3rem",
                     fontWeight: "800",
                     margin: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
                   }}
                 >
-                  📋 Personal Information
+                  <ClipboardList size={24} /> Personal Information
                 </h2>
                 <div style={{ display: "flex", gap: "10px" }}>
                   {editingSection !== "personal" ? (
@@ -665,8 +699,13 @@ export default function ProfilePage() {
                       className="btn btn-secondary"
                       onClick={() => setEditingSection("personal")}
                       disabled={editingSection !== null}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}
                     >
-                      ✏️ Edit Profile
+                      <Edit2 size={16} /> Edit Profile
                     </button>
                   ) : (
                     <>
@@ -682,11 +721,14 @@ export default function ProfilePage() {
                         style={{
                           background: "var(--orange-500)",
                           color: "white",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
                         }}
                         onClick={() => handleSave("personal")}
                         disabled={saving}
                       >
-                        💾 Save Profile
+                        <Save size={16} /> Save Profile
                       </button>
                     </>
                   )}
@@ -746,7 +788,7 @@ export default function ProfilePage() {
                         borderRadius: "6px",
                         background: "#f8f9fa",
                         color: "#6c757d",
-                        cursor: "not-allowed"
+                        cursor: "not-allowed",
                       }}
                     />
                   ) : (
@@ -860,9 +902,12 @@ export default function ProfilePage() {
                     fontSize: "1.2rem",
                     fontWeight: "700",
                     margin: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
                   }}
                 >
-                  🪪 School ID Requirements
+                  <IdCard size={22} /> School ID Requirements
                 </h2>
                 <div style={{ display: "flex", gap: "10px" }}>
                   {editingSection !== "requirements" ? (
@@ -870,8 +915,13 @@ export default function ProfilePage() {
                       className="btn btn-secondary"
                       onClick={() => setEditingSection("requirements")}
                       disabled={editingSection !== null}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}
                     >
-                      ✏️ Edit Info
+                      <Edit2 size={16} /> Edit Info
                     </button>
                   ) : (
                     <>
@@ -887,11 +937,14 @@ export default function ProfilePage() {
                         style={{
                           background: "var(--orange-500)",
                           color: "white",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
                         }}
                         onClick={() => handleSave("requirements")}
                         disabled={saving}
                       >
-                        💾 Save Info
+                        <Save size={16} /> Save Info
                       </button>
                     </>
                   )}
@@ -993,7 +1046,6 @@ export default function ProfilePage() {
                     <span>{profile.blood_type || "Not set"}</span>
                   )}
                 </div>
-
               </div>
             </div>
 
@@ -1018,7 +1070,7 @@ export default function ProfilePage() {
                 <div
                   style={{ display: "flex", alignItems: "center", gap: "10px" }}
                 >
-                  <span style={{ fontSize: "1.5rem" }}>📁</span>
+                  <FolderOpen size={24} color="#334155" />
                   <h2
                     style={{
                       color: "#334155",
@@ -1034,11 +1086,16 @@ export default function ProfilePage() {
                   {editingSection !== "documents" ? (
                     <button
                       className="btn btn-secondary"
-                      style={{ background: "white" }}
+                      style={{
+                        background: "white",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}
                       onClick={() => setEditingSection("documents")}
                       disabled={editingSection !== null}
                     >
-                      ✏️ Manage
+                      <Edit2 size={16} /> Manage
                     </button>
                   ) : (
                     <>
@@ -1055,11 +1112,14 @@ export default function ProfilePage() {
                           background: "#334155",
                           color: "white",
                           border: "none",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
                         }}
                         onClick={() => handleSave("documents")}
                         disabled={saving}
                       >
-                        💾 Save Files
+                        <Save size={16} /> Save Files
                       </button>
                     </>
                   )}
@@ -1117,11 +1177,22 @@ export default function ProfilePage() {
                           fontWeight: "bold",
                           color: profile[doc.id] ? "#059669" : "#dc2626",
                           background: profile[doc.id] ? "#d1fae5" : "#fee2e2",
-                          padding: "2px 8px",
+                          padding: "4px 8px",
                           borderRadius: "12px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "4px",
                         }}
                       >
-                        {profile[doc.id] ? "✔️ UPLOADED" : "❌ MISSING"}
+                        {profile[doc.id] ? (
+                          <>
+                            <Check size={14} /> UPLOADED
+                          </>
+                        ) : (
+                          <>
+                            <X size={14} /> MISSING
+                          </>
+                        )}
                       </span>
                     </div>
 
@@ -1157,7 +1228,7 @@ export default function ProfilePage() {
                           onChange={(e) => handleFileUpload(e, doc.id)}
                         />
                         {formData[doc.id] && (
-                          <span style={{ fontSize: "1.2rem" }}>✅</span>
+                          <CheckCircle size={20} color="#059669" />
                         )}
                       </div>
                     ) : (

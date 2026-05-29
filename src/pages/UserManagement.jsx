@@ -5,7 +5,7 @@ import {
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table";
-import { Plus, Search, Edit2, Archive, X } from "lucide-react"; // Modern icons
+import { Plus, Search, Edit2, Archive, X } from "lucide-react";
 import "../css/UserManagement.css";
 
 export default function UserManagement() {
@@ -211,7 +211,7 @@ export default function UserManagement() {
         },
       },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [searchTerm, currentPage],
   );
 

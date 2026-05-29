@@ -42,7 +42,7 @@ ChartJS.register(
 export default function AdminDashboard() {
   const navigate = useNavigate();
 
-  /** Generates array of the last 7 days for trend charts. */
+  // Helper function to generate the last 7 days for enrollment trends
   const getLast7Days = () => {
     const days = [];
     for (let i = 6; i >= 0; i--) {
@@ -71,14 +71,12 @@ export default function AdminDashboard() {
     enrollmentTrends: getLast7Days(),
   });
 
+  // Fetch all necessary data for the dashboard on component mount
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        // Fetch aggregate statistics
         const statsRes = await fetch("/api/admin/stats");
         const statsData = statsRes.ok ? await statsRes.json() : {};
-
-        // Fetch recent enrollments for pending requests and charts
         let realRecent = [];
         let realPending = 0;
         let calculatedTrends = getLast7Days();

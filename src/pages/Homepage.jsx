@@ -60,11 +60,12 @@ export default function Homepage() {
   );
 }
 
+// Main content component for the student homepage/dashboard
 function HomepageContent() {
   const { openModal, searchQuery } = useContext(DashboardContext);
 
   const user = JSON.parse(localStorage.getItem("user")) || {};
-  
+
   useEffect(() => {
     if (!user.id) {
       window.location.href = "/login";
@@ -73,10 +74,10 @@ function HomepageContent() {
 
   const studentName = user.full_name || "Unknown";
   const studentId = user.id || "N/A";
-  
+
   const [profile, setProfile] = useState({
     program: "Loading...",
-    current_level: "Loading..."
+    current_level: "Loading...",
   });
   const [enrollments, setEnrollments] = useState([]);
 
@@ -89,12 +90,12 @@ function HomepageContent() {
           if (data && data.program) {
             setProfile({
               program: data.program,
-              current_level: data.current_level || "1st Year"
+              current_level: data.current_level || "1st Year",
             });
           } else {
             setProfile({
               program: "BS Information Technology",
-              current_level: "1st Year"
+              current_level: "1st Year",
             });
           }
         })
@@ -105,7 +106,6 @@ function HomepageContent() {
     fetch("/api/enrollments")
       .then((res) => res.json())
       .then((data) => {
-        /** Filter enrollment records by authenticated user session */
         const myEnrolled = data.filter(
           (e) => e.student_email === user.email && e.status === "enrolled",
         );
