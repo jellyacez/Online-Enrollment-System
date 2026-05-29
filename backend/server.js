@@ -43,7 +43,6 @@ app.get("/api/audit-logs/count", async (req, res) => {
 app.get("/api/active-users/count", async (req, res) => {
   try {
     // Counts unique user_ids that have an audit log entry in the last 15 minutes.
-    // (If your timestamp column in audit_logs is named something else, change 'created_at')
     const [rows] = await pool.query(`
             SELECT COUNT(DISTINCT user_id) as total 
             FROM audit_logs 
