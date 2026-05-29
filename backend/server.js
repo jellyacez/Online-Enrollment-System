@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 const setupDatabase = require("./config/setup");
-const pool = require("./config/db"); // <--- ADDED: Import pool for the audit logs count
+const pool = require("./config/db");
 
 setupDatabase()
   .then(() => {
@@ -29,7 +29,7 @@ app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/audit", require("./routes/auditRoutes"));
 
-// ---> ADDED: New route to count audit logs for the dashboard <---
+// New route to count audit logs for the dashboard <---
 app.get("/api/audit-logs/count", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT COUNT(*) as total FROM audit_logs");
